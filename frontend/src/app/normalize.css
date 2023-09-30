@@ -1,0 +1,42 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+}
+
+ul {
+    list-style: none;
+}
+
+input,
+textarea,
+button {
+    -webkit-appearance: none;
+    -webkit-border-radius: 0;
+    border: none;
+    outline: none;
+}
+
+button {
+    background: transparent;
+    border: none;
+    position: relative;
+    cursor: pointer;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    display: inline-block;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}

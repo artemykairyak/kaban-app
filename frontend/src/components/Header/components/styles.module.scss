@@ -1,0 +1,29 @@
+.avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 100%;
+  background-color: var(--bg-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color);
+  overflow: hidden;
+}
+
+.icon {
+  width: 25px;
+  height: 25px;
+}
+
+.initials {
+  font-size: 16px;
+  text-transform: uppercase;
+  color: var(--text-color)
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}

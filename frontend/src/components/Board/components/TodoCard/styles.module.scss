@@ -1,0 +1,27 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--gray30);
+  border-radius: 7px;
+  padding: 10px;
+}
+
+.title {
+  border-bottom: 1px solid var(--text-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+.titleText {
+  font-weight: 500;
+}
+
+.deleteBtn {
+  background-color: var(--red40);
+  border-radius: 100%;
+  width: 25px;
+  height: 25px;
+  color: var(--white)
+}

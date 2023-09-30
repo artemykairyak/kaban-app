@@ -58,7 +58,6 @@ module.exports = {
     'no-unsafe-negation': 'error', // Disallow negating the left operand of relational operators.
     'use-isnan': 'error', // Require calls to isNaN() when checking for NaN.
     'valid-typeof': 'error', // Enforce comparing typeof expressions against valid strings.
-
     // @typescript-eslint
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-explicit-any': ['warn', { ignoreRestArgs: false }],
@@ -85,7 +84,6 @@ module.exports = {
 
     // import
     'import/no-cycle': [2, { maxDepth: 1 }],
-    'import/no-extraneous-dependencies': [2, { devDependencies: true }],
     'import/no-unresolved': 'off',
     'import/named': 'warn',
 
