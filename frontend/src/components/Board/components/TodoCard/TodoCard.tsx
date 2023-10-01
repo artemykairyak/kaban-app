@@ -6,8 +6,9 @@ import {
 } from 'react-beautiful-dnd';
 import { FC } from 'react';
 import { SVG } from '@/components/ui/SVG/SVG';
-import CloseIcon from '@/images/closeIcon.svg';
+import CloseIcon from '@/images/closeIconRounded.svg';
 import s from './styles.module.scss';
+import { useBoardStore } from '@/store/BoardStore';
 
 interface TodoCardProps {
   todo: Todo;
@@ -26,6 +27,8 @@ export const TodoCard: FC<TodoCardProps> = ({
   innerRef,
   index,
 }) => {
+  const { deleteTodo } = useBoardStore(({ deleteTodo }) => ({ deleteTodo }));
+
   return (
     <div
       {...draggableProps}
@@ -35,7 +38,10 @@ export const TodoCard: FC<TodoCardProps> = ({
     >
       <div className={s.title}>
         <span className={s.titleText}>{todo.title}</span>
-        <button className={s.deleteBtn}>
+        <button
+          className={s.deleteBtn}
+          onClick={() => deleteTodo(index, todo, id)}
+        >
           <SVG src={CloseIcon} />
         </button>
       </div>

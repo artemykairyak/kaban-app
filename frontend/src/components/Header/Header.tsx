@@ -5,6 +5,8 @@ import { ReactSVG } from 'react-svg';
 import s from './styles.module.scss';
 import { Avatar } from '@/components/Header/components/Avatar';
 import { User } from '@/types/types';
+import { useBoardStore } from '@/store/BoardStore';
+import { Input } from '@/components/ui/Input/Input';
 
 const testUser: User = {
   name: 'Artemy',
@@ -15,6 +17,12 @@ const testUser: User = {
 };
 
 export const Header = () => {
+  const { searchString, setSearchString } = useBoardStore(
+    ({ searchString, setSearchString }) => ({
+      searchString,
+      setSearchString,
+    }),
+  );
   const onSearch = (e) => {
     e.preventDefault();
 
@@ -28,10 +36,13 @@ export const Header = () => {
       </a>
       <div className={s.controls}>
         <form className={s.search}>
-          <input type="search" className={s.input} />
-          <button className={s.searchBtn} onClick={onSearch}>
-            <ReactSVG src={SearchIcon.src} />
-          </button>
+          <Input
+            name="search"
+            placeholder="Search"
+            icon={SearchIcon}
+            value={searchString}
+            onChange={(e) => setSearchString(e.target.value)}
+          />
         </form>
         <Avatar logged={true} user={testUser} />
       </div>

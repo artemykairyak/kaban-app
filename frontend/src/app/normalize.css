@@ -40,3 +40,9 @@ input::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
+
+button,
+input, textarea {
+    font-family: inherit;
+    font-weight: inherit;
+}

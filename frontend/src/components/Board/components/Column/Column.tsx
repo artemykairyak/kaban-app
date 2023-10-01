@@ -1,10 +1,11 @@
 'use client';
 
 import { Draggable, Droppable } from 'react-beautiful-dnd';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import s from './styles.module.scss';
 import clsx from 'clsx';
 import { TodoCard } from '../TodoCard/TodoCard';
+import { useBoardStore } from '@/store/BoardStore';
 
 interface ColumnProps {
   id: TypedColumn;
@@ -20,62 +21,71 @@ const columnName: Record<TypedColumn, string> = {
 };
 
 export const Column: FC<ColumnProps> = ({ id, index, todos, className }) => {
+  const { searchString } = useBoardStore(({ searchString }) => ({
+    searchString,
+  }));
+
+  const todosCount = useMemo(() => {
+    return searchString
+      ? todos.filter((todo) =>
+          todo.title.toLowerCase().includes(searchString.toLowerCase()),
+        ).length
+      : todos.length;
+  }, [searchString, todos]);
+
   return (
-    <Draggable draggableId={id} index={index}>
-      {(provided) => {
-        return (
-          <div
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-            ref={provided.innerRef}
-            className={className}
-          >
-            <Droppable droppableId={index.toString()} type="card">
-              {(provided, snapshot) => {
-                return (
-                  <div
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    className={clsx(s.column, {
-                      [s.draggable]: snapshot.isDraggingOver,
-                    })}
-                  >
-                    <h2 className={s.columnTitle}>
-                      {columnName[id]}
-                      <span className={s.count}>{todos.length}</span>
-                    </h2>
-                    <div className={s.cards}>
-                      {todos.map((todo, index) => {
+    <div className={className}>
+      <Droppable droppableId={index.toString()} type="card">
+        {(provided, snapshot) => {
+          return (
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              className={clsx(s.column, {
+                [s.draggable]: snapshot.isDraggingOver,
+              })}
+            >
+              <h2 className={s.columnTitle}>
+                {columnName[id]}
+                <span className={s.count}>{todosCount}</span>
+              </h2>
+              <div className={s.cards}>
+                {todos.map((todo, index) => {
+                  if (
+                    searchString &&
+                    !todo.title
+                      .toLowerCase()
+                      .includes(searchString.toLowerCase())
+                  ) {
+                    return null;
+                  }
+                  return (
+                    <Draggable
+                      draggableId={todo.id}
+                      index={index}
+                      key={todo.id}
+                    >
+                      {(provided) => {
                         return (
-                          <Draggable
-                            draggableId={todo.id}
+                          <TodoCard
+                            todo={todo}
                             index={index}
-                            key={todo.id}
-                          >
-                            {(provided) => {
-                              return (
-                                <TodoCard
-                                  todo={todo}
-                                  index={index}
-                                  id={id}
-                                  innerRef={provided.innerRef}
-                                  draggableProps={provided.draggableProps}
-                                  dragHandleProps={provided.dragHandleProps}
-                                />
-                              );
-                            }}
-                          </Draggable>
+                            id={id}
+                            innerRef={provided.innerRef}
+                            draggableProps={provided.draggableProps}
+                            dragHandleProps={provided.dragHandleProps}
+                          />
                         );
-                      })}
-                      {provided.placeholder}
-                    </div>
-                  </div>
-                );
-              }}
-            </Droppable>
-          </div>
-        );
-      }}
-    </Draggable>
+                      }}
+                    </Draggable>
+                  );
+                })}
+                {provided.placeholder}
+              </div>
+            </div>
+          );
+        }}
+      </Droppable>
+    </div>
   );
 };

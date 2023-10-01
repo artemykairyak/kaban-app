@@ -4,15 +4,27 @@ import { useBoardStore } from '@/store/BoardStore';
 import { useEffect } from 'react';
 import s from './styles.module.scss';
 import { Column } from './components/Column/Column';
+import { useModalStore } from '@/store/ModalStore';
+import { Modal } from '@/components/Modal/Modal';
+import { AddTodoModal } from '@/components/Board/components/AddTodoModal/AddTodoModal';
+import { Button } from '@/components/ui/Button/Button';
 
 export const Board = () => {
-  const { board, getBoard, setBoardState } = useBoardStore(
-    ({ board, getBoard, setBoardState }) => ({
+  const { board, getBoard, setBoardState, updateTodo } = useBoardStore(
+    ({ board, getBoard, setBoardState, updateTodo }) => ({
       board,
       getBoard,
       setBoardState,
+      updateTodo,
     }),
   );
+
+  const { isOpen, closeModal } = useModalStore(({ isOpen, closeModal }) => ({
+    isOpen,
+    closeModal,
+  }));
+
+  const openModal = useModalStore((state) => state.openModal);
 
   useEffect(() => {
     getBoard();
@@ -27,17 +39,11 @@ export const Board = () => {
       return;
     }
 
-    if (type === 'column') {
-      const entries = [...board.columns.entries()];
-      const [removed] = entries.splice(source.index, 1);
-      entries.splice(destination.index, 0, removed);
-      const rearrangedColumns = new Map(entries);
-      setBoardState({ ...board, columns: rearrangedColumns });
-    }
-
     const columns = [...board.columns];
     const startColIndex = columns[+source.droppableId];
     const finishColIndex = columns[+destination.droppableId];
+
+    console.log(startColIndex);
 
     const startCol: Column = {
       id: startColIndex[0],
@@ -85,26 +91,30 @@ export const Board = () => {
 
       //todo: update db
 
+      updateTodo(todoMoved, finishCol.id);
+
       setBoardState({ ...board, columns: newColumns });
     }
   };
 
   return (
-    <div className={s.container}>
-      <div className={s.header}>
-        <h1 className={s.title}>Board</h1>
-        <button className={s.addTaskBtn}>Add task</button>
-      </div>
-      <DragDropContext onDragEnd={handleOnDragEnd}>
-        <Droppable direction="horizontal" droppableId="board" type="column">
-          {(provided) => (
-            <div
-              className={s.board}
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-            >
-              {Array.from(board.columns.entries()).map(
-                ([id, column], index) => {
+    <>
+      <div className={s.container}>
+        <div className={s.header}>
+          <h1>Board</h1>
+          <Button type="primary" onClick={openModal}>
+            Add task
+          </Button>
+        </div>
+        <DragDropContext onDragEnd={handleOnDragEnd}>
+          <Droppable direction="horizontal" droppableId="board" type="column">
+            {(provided) => (
+              <div
+                className={s.board}
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {[...board.columns.entries()].map(([id, column], index) => {
                   return (
                     <Column
                       id={id}
@@ -114,12 +124,15 @@ export const Board = () => {
                       className={s.column}
                     />
                   );
-                },
-              )}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
-    </div>
+                })}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </div>
+      <Modal isOpen={isOpen} onClose={closeModal}>
+        <AddTodoModal />
+      </Modal>
+    </>
   );
 };
