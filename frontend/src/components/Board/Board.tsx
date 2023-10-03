@@ -19,6 +19,10 @@ export const Board = () => {
     }),
   );
 
+  const state = useBoardStore((state1) => state1);
+
+  console.log(state);
+
   const { isOpen, closeModal } = useModalStore(({ isOpen, closeModal }) => ({
     isOpen,
     closeModal,
@@ -43,8 +47,6 @@ export const Board = () => {
     const startColIndex = columns[+source.droppableId];
     const finishColIndex = columns[+destination.droppableId];
 
-    console.log(startColIndex);
-
     const startCol: Column = {
       id: startColIndex[0],
       todos: startColIndex[1].todos,
@@ -67,7 +69,6 @@ export const Board = () => {
     const [todoMoved] = newTodos.splice(source.index, 1);
 
     if (startCol.id === finishCol.id) {
-      console.log('equals', startCol.id, finishCol.id);
       newTodos.splice(destination.index, 0, todoMoved);
 
       const newCol: Column = { id: startCol.id, todos: newTodos };
@@ -76,7 +77,6 @@ export const Board = () => {
 
       setBoardState({ ...board, columns: newColumns });
     } else {
-      console.log('non equals');
       const finishTodos = [...finishCol.todos];
       finishTodos.splice(destination.index, 0, todoMoved);
 
@@ -102,7 +102,7 @@ export const Board = () => {
       <div className={s.container}>
         <div className={s.header}>
           <h1>Board</h1>
-          <Button type="primary" onClick={openModal}>
+          <Button kind="primary" onClick={openModal}>
             Add task
           </Button>
         </div>

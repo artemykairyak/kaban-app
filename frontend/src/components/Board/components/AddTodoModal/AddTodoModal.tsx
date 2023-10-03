@@ -7,6 +7,7 @@ import { addTodoSchema } from '@/components/Board/components/AddTodoModal/valida
 import { Button } from '@/components/ui/Button/Button';
 import { Label } from '@/components/ui/Label/Label';
 import clsx from 'clsx';
+import { useBoardStore } from '@/store/BoardStore';
 
 interface AddTodoForm {
   title: string;
@@ -23,12 +24,16 @@ export const AddTodoModal = () => {
     getValues,
     formState: { errors },
   } = useForm<AddTodoForm>({
+    mode: 'onSubmit',
     resolver: yupResolver(addTodoSchema),
     defaultValues: { status: 'todo' },
   });
 
+  const addTodo = useBoardStore((state) => state.addTodo);
+
   const onSubmit = async (data: AddTodoForm) => {
-    console.log(data);
+    console.log('SUBMIT', data);
+    addTodo(data);
   };
 
   return (
@@ -52,12 +57,16 @@ export const AddTodoModal = () => {
           {columns.map((col) => {
             return (
               <button
+                type="button"
                 key={col.key}
                 className={clsx(s.status, {
                   [s.selected]: getValues('status') === col.key,
                 })}
                 onClick={() => {
-                  setValue('status', col.key);
+                  setValue('status', col.key, {
+                    shouldValidate: true,
+                    shouldDirty: true,
+                  });
                 }}
               >
                 {col.title}
@@ -70,7 +79,9 @@ export const AddTodoModal = () => {
         <Label className={s.label}>Description</Label>
         <textarea className={s.desc} {...register('description')} />
       </div>
-      <Button type="primary">Add task</Button>
+      <Button kind="primary" type="submit">
+        Add task
+      </Button>
     </form>
   );
 };

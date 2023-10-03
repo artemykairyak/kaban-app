@@ -23,6 +23,7 @@ export const Header = () => {
       setSearchString,
     }),
   );
+
   const onSearch = (e) => {
     e.preventDefault();
 

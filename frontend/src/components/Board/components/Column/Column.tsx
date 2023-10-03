@@ -31,7 +31,7 @@ export const Column: FC<ColumnProps> = ({ id, index, todos, className }) => {
           todo.title.toLowerCase().includes(searchString.toLowerCase()),
         ).length
       : todos.length;
-  }, [searchString, todos]);
+  }, [searchString, todos.length]);
 
   return (
     <div className={className}>

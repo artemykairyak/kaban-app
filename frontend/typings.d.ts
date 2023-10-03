@@ -13,5 +13,7 @@ interface Todo {
   id: string;
   title: string;
   status: TypedColumn;
+  description: string;
+  color?: string;
   image?: string;
 }

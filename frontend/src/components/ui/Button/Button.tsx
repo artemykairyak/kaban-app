@@ -1,10 +1,11 @@
-import { FC, PropsWithChildren, ReactNode } from 'react';
+import { ButtonHTMLAttributes, FC, PropsWithChildren, ReactNode } from 'react';
 import clsx from 'clsx';
 import { SVG } from '@/components/ui/SVG/SVG';
 import s from './styles.module.scss';
 
-interface ButtonProps extends PropsWithChildren {
-  type: 'primary' | 'secondary';
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  kind: 'primary' | 'secondary';
+  children: ReactNode;
   loading?: boolean;
   disabled?: boolean;
   onClick?: VoidFunction;
@@ -17,21 +18,23 @@ export const Button: FC<ButtonProps> = ({
   icon,
   iconClassName,
   className,
-  type,
+  kind,
   loading,
   onClick,
   disabled,
   children,
+  ...props
 }) => {
   return (
     <button
       className={clsx(
         s.button,
-        type === 'primary' ? s.primaryButton : s.secondaryButton,
+        kind === 'primary' ? s.primaryButton : s.secondaryButton,
         className,
       )}
       onClick={onClick}
       disabled={disabled}
+      {...props}
     >
       {icon && <SVG src={icon} />}
       {children}
