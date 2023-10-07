@@ -1,52 +1,66 @@
 'use client';
-import Logo from '../images/logo.svg';
-import SearchIcon from '../images/search.svg';
-import { ReactSVG } from 'react-svg';
+import Logo from './images/logo.svg';
+import SearchIcon from './images/search.svg';
 import s from './styles.module.scss';
 import { Avatar } from '@/components/Header/components/Avatar';
-import { User } from '@/types/types';
 import { useBoardStore } from '@/store/BoardStore';
 import { Input } from '@/components/ui/Input/Input';
-
-const testUser: User = {
-  name: 'Artemy',
-  surname: 'Kairyak',
-  email: 'kek@kek.ru',
-  avatar: 'https://www.serebii.net/scarletviolet/pichugift.jpg',
-  id: 1,
-};
+import { useAuthStore } from '@/store/AuthStore';
+import { AuthModal } from '@/components/Header/components/AuthModal/AuthModal';
+import { Modal } from '@/components/Modal/Modal';
+import { useState } from 'react';
+import { useProtectedRoute } from '@/hooks/useProtectedRoute';
+import { signOut } from 'next-auth/react';
 
 export const Header = () => {
+  useProtectedRoute();
+
   const { searchString, setSearchString } = useBoardStore(
     ({ searchString, setSearchString }) => ({
       searchString,
       setSearchString,
     }),
   );
+  const { isLogged, user } = useAuthStore(({ user, isLogged }) => ({
+    user,
+    isLogged,
+  }));
 
-  const onSearch = (e) => {
-    e.preventDefault();
+  const [isOpenedModal, setIsOpenedModal] = useState(false);
 
-    console.log('search');
+  console.log('USER', user);
+
+  const onClickAvatar = () => {
+    if (!isLogged) {
+      setIsOpenedModal(true);
+      return;
+    }
+
+    signOut();
   };
 
   return (
-    <header className={s.header}>
-      <a className={s.logo} href="/">
-        <img src={Logo.src} alt="Kaban logo" className={s.logoPic} /> Kaban
-      </a>
-      <div className={s.controls}>
-        <form className={s.search}>
-          <Input
-            name="search"
-            placeholder="Search"
-            icon={SearchIcon}
-            value={searchString}
-            onChange={(e) => setSearchString(e.target.value)}
-          />
-        </form>
-        <Avatar logged={true} user={testUser} />
-      </div>
-    </header>
+    <>
+      <header className={s.header}>
+        <a className={s.logo} href="/">
+          <img src={Logo.src} alt="Kaban logo" className={s.logoPic} /> Kaban
+        </a>
+        <div className={s.controls}>
+          <form className={s.search}>
+            <Input
+              name="search"
+              placeholder="Search"
+              icon={SearchIcon}
+              value={searchString}
+              onChange={(v) => setSearchString(v)}
+            />
+          </form>
+          <Avatar user={user} onClick={onClickAvatar} />
+        </div>
+      </header>
+      <Modal isOpen={isOpenedModal} onClose={() => setIsOpenedModal(false)}>
+        <AuthModal />
+      </Modal>
+    </>
   );
 };

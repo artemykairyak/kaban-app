@@ -3,21 +3,25 @@ const cards: Todo[] = [
     id: '1',
     status: 'inProgress',
     title: 'kek',
+    description: '111',
   },
   {
     id: '2',
     status: 'todo',
     title: '333',
+    description: '111',
   },
   {
     id: '3',
     status: 'done',
     title: '222',
+    description: '111',
   },
   {
     id: '5',
     status: 'inProgress',
     title: '1212',
+    description: '111',
   },
 ];
 
@@ -34,6 +38,7 @@ export const getTodosGroupedByColumn = async () => {
       id: todo.id,
       title: todo.title,
       status: todo.status,
+      description: todo.description,
       ...(todo.image && { image: JSON.parse(todo.image) }),
     });
 

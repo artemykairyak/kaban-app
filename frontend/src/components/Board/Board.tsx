@@ -1,10 +1,9 @@
 'use client';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { useBoardStore } from '@/store/BoardStore';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import s from './styles.module.scss';
 import { Column } from './components/Column/Column';
-import { useModalStore } from '@/store/ModalStore';
 import { Modal } from '@/components/Modal/Modal';
 import { AddTodoModal } from '@/components/Board/components/AddTodoModal/AddTodoModal';
 import { Button } from '@/components/ui/Button/Button';
@@ -20,15 +19,9 @@ export const Board = () => {
   );
 
   const state = useBoardStore((state1) => state1);
+  const [isOpenedModal, setIsOpenedModal] = useState(false);
 
   console.log(state);
-
-  const { isOpen, closeModal } = useModalStore(({ isOpen, closeModal }) => ({
-    isOpen,
-    closeModal,
-  }));
-
-  const openModal = useModalStore((state) => state.openModal);
 
   useEffect(() => {
     getBoard();
@@ -102,7 +95,7 @@ export const Board = () => {
       <div className={s.container}>
         <div className={s.header}>
           <h1>Board</h1>
-          <Button kind="primary" onClick={openModal}>
+          <Button kind="primary" onClick={() => setIsOpenedModal(true)}>
             Add task
           </Button>
         </div>
@@ -130,7 +123,7 @@ export const Board = () => {
           </Droppable>
         </DragDropContext>
       </div>
-      <Modal isOpen={isOpen} onClose={closeModal}>
+      <Modal isOpen={isOpenedModal} onClose={() => setIsOpenedModal(false)}>
         <AddTodoModal />
       </Modal>
     </>

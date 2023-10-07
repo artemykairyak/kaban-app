@@ -1,11 +1,13 @@
-import { Header } from '@/components/Header/Header';
-import { Board } from '@/components/Board/Board';
+import { getServerSession } from 'next-auth';
+import { authConfig } from '@/constants/constants';
+import { App } from '@/components/App/App';
 
-export default function Home() {
+export default async function Home() {
+  const session = await getServerSession(authConfig);
+
   return (
     <main>
-      <Header />
-      <Board />
+      <App session={session} />
     </main>
   );
 }

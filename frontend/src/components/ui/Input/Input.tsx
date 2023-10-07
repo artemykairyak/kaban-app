@@ -5,8 +5,11 @@ import { FieldValues, RegisterOptions, UseFormRegister } from 'react-hook-form';
 import { Label } from '@/components/ui/Label/Label';
 import { SVG } from '@/components/ui/SVG/SVG';
 
-export interface InputProps extends Partial<HTMLInputElement> {
+export interface InputProps {
   name: string;
+  value?: string;
+  placeholder?: string;
+  onChange?: (v: string) => void;
   icon?: { src: string };
   register?: UseFormRegister<FieldValues>;
   type?: HTMLInputTypeAttribute;
@@ -23,6 +26,7 @@ export const Input: FC<InputProps> = ({
   isError,
   validationOptions,
   register,
+  onChange,
   type = 'text',
   icon,
   ...rest
@@ -34,6 +38,7 @@ export const Input: FC<InputProps> = ({
       {icon && <SVG src={icon} className={s.icon} />}
       {label && <Label htmlFor={name}>{label}</Label>}
       <input
+        onChange={(e) => onChange && onChange(e.target.value)}
         type={type}
         name={name}
         className={clsx(s.input, className, { [s.error]: isError })}

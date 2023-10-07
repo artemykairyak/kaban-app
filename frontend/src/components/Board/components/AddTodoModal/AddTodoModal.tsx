@@ -9,21 +9,14 @@ import { Label } from '@/components/ui/Label/Label';
 import clsx from 'clsx';
 import { useBoardStore } from '@/store/BoardStore';
 
-interface AddTodoForm {
-  title: string;
-  status: TypedColumn;
-  description: string;
-}
-
 export const AddTodoModal = () => {
   const {
     register,
     handleSubmit,
-    reset,
     setValue,
     getValues,
     formState: { errors },
-  } = useForm<AddTodoForm>({
+  } = useForm<FieldValues>({
     mode: 'onSubmit',
     resolver: yupResolver(addTodoSchema),
     defaultValues: { status: 'todo' },
@@ -31,9 +24,9 @@ export const AddTodoModal = () => {
 
   const addTodo = useBoardStore((state) => state.addTodo);
 
-  const onSubmit = async (data: AddTodoForm) => {
+  const onSubmit: SubmitHandler<FieldValues> = (data) => {
     console.log('SUBMIT', data);
-    addTodo(data);
+    addTodo(data as Todo);
   };
 
   return (

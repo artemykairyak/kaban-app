@@ -1,0 +1,17 @@
+{
+  "name": "kaban-app-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "dev": "node index.ts"
+  },
+  "author": "artemykairyak",
+  "license": "ISC",
+  "dependencies": {
+    "express": "4.18.2"
+  },
+  "devDependencies": {
+    "@types/node": "20.8.3"
+  }
+}

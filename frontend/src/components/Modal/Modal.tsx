@@ -11,6 +11,8 @@ interface ModalProps extends PropsWithChildren {
   onClose: VoidFunction;
 }
 
+const portalDiv = document.querySelector('.modals') as Element;
+
 export const Modal: FC<ModalProps> = ({ children, isOpen, onClose }) => {
   if (!isOpen) return null;
 
@@ -23,6 +25,6 @@ export const Modal: FC<ModalProps> = ({ children, isOpen, onClose }) => {
         <div className={s.content}>{children}</div>
       </div>
     </div>,
-    document.querySelector('.modals'),
+    portalDiv,
   );
 };
