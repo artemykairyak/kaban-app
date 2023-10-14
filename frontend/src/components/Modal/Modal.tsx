@@ -11,10 +11,10 @@ interface ModalProps extends PropsWithChildren {
   onClose: VoidFunction;
 }
 
-const portalDiv = document.querySelector('.modals') as Element;
-
 export const Modal: FC<ModalProps> = ({ children, isOpen, onClose }) => {
   if (!isOpen) return null;
+
+  const portalDiv = document.querySelector('.modals') as Element;
 
   return createPortal(
     <div className={s.overlay}>

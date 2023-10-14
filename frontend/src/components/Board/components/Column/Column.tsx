@@ -1,91 +1,99 @@
 'use client';
 
 import { Draggable, Droppable } from 'react-beautiful-dnd';
-import { FC, useMemo } from 'react';
+import { FC, memo, useMemo } from 'react';
 import s from './styles.module.scss';
 import clsx from 'clsx';
 import { TodoCard } from '../TodoCard/TodoCard';
 import { useBoardStore } from '@/store/BoardStore';
+import { Task, TaskStatus } from '@commonTypes/Task';
 
 interface ColumnProps {
-  id: TypedColumn;
-  todos: Todo[];
+  id: TaskStatus;
+  todos: Task[];
   index: number;
   className?: string;
 }
 
-const columnName: Record<TypedColumn, string> = {
+const columnName: Record<TaskStatus, string> = {
   done: 'Done',
   todo: 'To Do',
   inProgress: 'In Progress',
 };
 
-export const Column: FC<ColumnProps> = ({ id, index, todos, className }) => {
-  const { searchString } = useBoardStore(({ searchString }) => ({
-    searchString,
-  }));
+export const Column: FC<ColumnProps> = memo(
+  ({ id, index, todos, className }) => {
+    const { searchString } = useBoardStore(({ searchString }) => ({
+      searchString,
+    }));
 
-  const todosCount = useMemo(() => {
-    return searchString
-      ? todos.filter((todo) =>
-          todo.title.toLowerCase().includes(searchString.toLowerCase()),
-        ).length
-      : todos.length;
-  }, [searchString, todos.length]);
+    console.log('RERENDER', id, todos);
 
-  return (
-    <div className={className}>
-      <Droppable droppableId={index.toString()} type="card">
-        {(provided, snapshot) => {
-          return (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              className={clsx(s.column, {
-                [s.draggable]: snapshot.isDraggingOver,
-              })}
-            >
-              <h2 className={s.columnTitle}>
-                {columnName[id]}
-                <span className={s.count}>{todosCount}</span>
-              </h2>
-              <div className={s.cards}>
-                {todos.map((todo, index) => {
-                  if (
-                    searchString &&
-                    !todo.title
-                      .toLowerCase()
-                      .includes(searchString.toLowerCase())
-                  ) {
-                    return null;
-                  }
-                  return (
-                    <Draggable
-                      draggableId={todo.id}
-                      index={index}
-                      key={todo.id}
-                    >
-                      {(provided) => {
-                        return (
-                          <TodoCard
-                            todo={todo}
-                            index={index}
-                            id={id}
-                            innerRef={provided.innerRef}
-                            draggableProps={provided.draggableProps}
-                            dragHandleProps={provided.dragHandleProps}
-                          />
-                        );
-                      }}
-                    </Draggable>
-                  );
+    const todosCount = useMemo(() => {
+      return searchString
+        ? todos.filter((todo) =>
+            todo.title.toLowerCase().includes(searchString.toLowerCase()),
+          ).length
+        : todos.length;
+    }, [searchString, todos.length]);
+
+    return (
+      <div className={className}>
+        <Droppable droppableId={index.toString()} type="card">
+          {(provided, snapshot) => {
+            return (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                className={clsx(s.column, {
+                  [s.draggable]: snapshot.isDraggingOver,
                 })}
-                {provided.placeholder}
+              >
+                <h2 className={s.columnTitle}>
+                  {columnName[id]}
+                  <span className={s.count}>{todosCount}</span>
+                </h2>
+                <div className={s.cards}>
+                  {todos.map((todo, index) => {
+                    if (
+                      searchString &&
+                      !todo.title
+                        .toLowerCase()
+                        .includes(searchString.toLowerCase())
+                    ) {
+                      return null;
+                    }
+                    return (
+                      <Draggable
+                        draggableId={todo.id}
+                        index={index}
+                        key={todo.id}
+                      >
+                        {(provided) => {
+                          console.log('todo', todo);
+                          return (
+                            <TodoCard
+                              todo={todo}
+                              index={index}
+                              id={id}
+                              innerRef={provided.innerRef}
+                              draggableProps={provided.draggableProps}
+                              dragHandleProps={provided.dragHandleProps}
+                            />
+                          );
+                        }}
+                      </Draggable>
+                    );
+                  })}
+                  {provided.placeholder}
+                </div>
               </div>
-            </div>
-          );
-        }}
-      </Droppable>
-    </div>
-  );
-};
+            );
+          }}
+        </Droppable>
+      </div>
+    );
+  },
+);
+
+Column.displayName = 'Column';

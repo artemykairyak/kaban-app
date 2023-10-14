@@ -8,8 +8,11 @@ import { Button } from '@/components/ui/Button/Button';
 import { Label } from '@/components/ui/Label/Label';
 import clsx from 'clsx';
 import { useBoardStore } from '@/store/BoardStore';
+import { Task } from '@commonTypes/Task';
+import { useSession } from 'next-auth/react';
+import { FC } from 'react';
 
-export const AddTodoModal = () => {
+export const AddTodoModal: FC<{ onClose: VoidFunction }> = ({ onClose }) => {
   const {
     register,
     handleSubmit,
@@ -22,11 +25,14 @@ export const AddTodoModal = () => {
     defaultValues: { status: 'todo' },
   });
 
+  const { data: session } = useSession();
+
   const addTodo = useBoardStore((state) => state.addTodo);
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     console.log('SUBMIT', data);
-    addTodo(data as Todo);
+    addTodo(session.user.id, data as Task);
+    onClose();
   };
 
   return (

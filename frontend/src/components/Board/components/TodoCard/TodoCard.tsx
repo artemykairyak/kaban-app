@@ -9,11 +9,12 @@ import { SVG } from '@/components/ui/SVG/SVG';
 import CloseIcon from '@/images/closeIconRounded.svg';
 import s from './styles.module.scss';
 import { useBoardStore } from '@/store/BoardStore';
+import { Task, TaskStatus } from '@commonTypes/Task';
 
 interface TodoCardProps {
-  todo: Todo;
+  todo: Task;
   index: number;
-  id: TypedColumn;
+  id: TaskStatus;
   innerRef: (element: HTMLElement | null) => void;
   draggableProps: DraggableProvidedDraggableProps;
   dragHandleProps: DraggableProvidedDragHandleProps | null | undefined;

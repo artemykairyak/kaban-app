@@ -1,6 +1,8 @@
+import { TaskStatus } from '@commonTypes/Task';
+
 export interface AddTodoForm {
   title: string;
-  status: TypedColumn;
+  status: TaskStatus;
   description: string;
   id?: string;
 }

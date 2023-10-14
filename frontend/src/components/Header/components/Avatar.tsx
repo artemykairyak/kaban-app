@@ -1,11 +1,11 @@
 import s from './styles.module.scss';
-import { User } from '@/types/types';
+import { IUser } from '@/types/types';
 import { FC } from 'react';
 import SignInIcon from '../images/signInIcon.svg';
 import { SVG } from '@/components/ui/SVG/SVG';
 
 interface AvatarProps {
-  user: User | null;
+  user: IUser | null;
   onClick: VoidFunction;
 }
 
@@ -25,8 +25,12 @@ export const Avatar: FC<AvatarProps> = ({ user, onClick }) => {
 
   return (
     <button className={s.avatar} onClick={onClick}>
-      {user.image ? (
-        <img className={s.img} src={user.image} alt={`${user.name}'s avatar`} />
+      {user.picture ? (
+        <img
+          className={s.img}
+          src={user.picture}
+          alt={`${user.name}'s avatar`}
+        />
       ) : (
         <span className={s.initials}>{getInitials(user.name)}</span>
       )}

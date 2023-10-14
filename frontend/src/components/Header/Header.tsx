@@ -10,7 +10,7 @@ import { AuthModal } from '@/components/Header/components/AuthModal/AuthModal';
 import { Modal } from '@/components/Modal/Modal';
 import { useState } from 'react';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 
 export const Header = () => {
   useProtectedRoute();
@@ -21,17 +21,15 @@ export const Header = () => {
       setSearchString,
     }),
   );
-  const { isLogged, user } = useAuthStore(({ user, isLogged }) => ({
-    user,
-    isLogged,
-  }));
+
+  const { data } = useSession();
 
   const [isOpenedModal, setIsOpenedModal] = useState(false);
 
-  console.log('USER', user);
+  console.log('USER', data?.user);
 
   const onClickAvatar = () => {
-    if (!isLogged) {
+    if (!data?.user) {
       setIsOpenedModal(true);
       return;
     }
@@ -55,7 +53,7 @@ export const Header = () => {
               onChange={(v) => setSearchString(v)}
             />
           </form>
-          <Avatar user={user} onClick={onClickAvatar} />
+          <Avatar user={data?.user} onClick={onClickAvatar} />
         </div>
       </header>
       <Modal isOpen={isOpenedModal} onClose={() => setIsOpenedModal(false)}>

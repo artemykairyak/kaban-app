@@ -7,8 +7,11 @@ import { Column } from './components/Column/Column';
 import { Modal } from '@/components/Modal/Modal';
 import { AddTodoModal } from '@/components/Board/components/AddTodoModal/AddTodoModal';
 import { Button } from '@/components/ui/Button/Button';
+import { IColumn } from '@/types/types';
+import { useSession } from 'next-auth/react';
 
 export const Board = () => {
+  const { data } = useSession();
   const { board, getBoard, setBoardState, updateTodo } = useBoardStore(
     ({ board, getBoard, setBoardState, updateTodo }) => ({
       board,
@@ -18,14 +21,13 @@ export const Board = () => {
     }),
   );
 
-  const state = useBoardStore((state1) => state1);
   const [isOpenedModal, setIsOpenedModal] = useState(false);
 
-  console.log(state);
-
   useEffect(() => {
-    getBoard();
-  }, [getBoard]);
+    if (data?.user.id) {
+      getBoard(data.user.id);
+    }
+  }, [getBoard, data?.user]);
 
   const handleOnDragEnd = (result: DropResult) => {
     const { destination, source, type } = result;
@@ -40,12 +42,12 @@ export const Board = () => {
     const startColIndex = columns[+source.droppableId];
     const finishColIndex = columns[+destination.droppableId];
 
-    const startCol: Column = {
+    const startCol: IColumn = {
       id: startColIndex[0],
       todos: startColIndex[1].todos,
     };
 
-    const finishCol: Column = {
+    const finishCol: IColumn = {
       id: finishColIndex[0],
       todos: finishColIndex[1].todos,
     };
@@ -64,7 +66,7 @@ export const Board = () => {
     if (startCol.id === finishCol.id) {
       newTodos.splice(destination.index, 0, todoMoved);
 
-      const newCol: Column = { id: startCol.id, todos: newTodos };
+      const newCol: IColumn = { id: startCol.id, todos: newTodos };
       const newColumns = new Map(board.columns);
       newColumns.set(startCol.id, newCol);
 
@@ -74,7 +76,7 @@ export const Board = () => {
       finishTodos.splice(destination.index, 0, todoMoved);
 
       const newColumns = new Map(board.columns);
-      const newCol: Column = { id: startCol.id, todos: newTodos };
+      const newCol: IColumn = { id: startCol.id, todos: newTodos };
 
       newColumns.set(startCol.id, newCol);
       newColumns.set(finishCol.id, {
@@ -89,6 +91,8 @@ export const Board = () => {
       setBoardState({ ...board, columns: newColumns });
     }
   };
+
+  console.log('BOARD', board);
 
   return (
     <>
@@ -124,7 +128,7 @@ export const Board = () => {
         </DragDropContext>
       </div>
       <Modal isOpen={isOpenedModal} onClose={() => setIsOpenedModal(false)}>
-        <AddTodoModal />
+        <AddTodoModal onClose={() => setIsOpenedModal(false)} />
       </Modal>
     </>
   );

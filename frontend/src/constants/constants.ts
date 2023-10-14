@@ -1,18 +1,7 @@
-import { getServerSession, NextAuthOptions } from 'next-auth';
-import GoogleProvider from 'next-auth/providers/google';
-import { redirect } from 'next/navigation';
+import { TaskStatus } from '@commonTypes/Task';
 
-export const columns: { title: string; key: TypedColumn }[] = [
+export const columns: { title: string; key: TaskStatus }[] = [
   { title: 'To do', key: 'todo' },
   { title: 'In progress', key: 'inProgress' },
   { title: 'Done', key: 'done' },
 ];
-
-export const authConfig: NextAuthOptions = {
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-    }),
-  ],
-};

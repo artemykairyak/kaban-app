@@ -1,0 +1,31 @@
+.content {
+  border: 1px solid var(--gray15);
+  border-radius: 7px;
+  padding: 15px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 300px;
+}
+
+.title {
+  font-size: 24px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.btn {
+  display: flex;
+  color: var(--text-color);
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  background-color: var(--gray15);
+  border-radius: 7px;
+  gap: 5px;
+  font-size: 16px;
+}
+
+.icon {
+  width: 35px;
+}

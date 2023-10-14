@@ -1,4 +1,4 @@
-import { ButtonHTMLAttributes, FC, PropsWithChildren, ReactNode } from 'react';
+import { ButtonHTMLAttributes, FC, ReactNode } from 'react';
 import clsx from 'clsx';
 import { SVG } from '@/components/ui/SVG/SVG';
 import s from './styles.module.scss';

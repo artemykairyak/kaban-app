@@ -1,32 +1,8 @@
-const cards: Todo[] = [
-  {
-    id: '1',
-    status: 'inProgress',
-    title: 'kek',
-    description: '111',
-  },
-  {
-    id: '2',
-    status: 'todo',
-    title: '333',
-    description: '111',
-  },
-  {
-    id: '3',
-    status: 'done',
-    title: '222',
-    description: '111',
-  },
-  {
-    id: '5',
-    status: 'inProgress',
-    title: '1212',
-    description: '111',
-  },
-];
+import { Task, TaskStatus } from '@commonTypes/Task';
+import { IBoard, IColumn } from '@/types/types';
 
-export const getTodosGroupedByColumn = async () => {
-  const columns = cards.reduce((acc, todo) => {
+export const getTodosGroupedByColumn = (tasks: Task[]) => {
+  const columns = tasks.reduce((acc, todo) => {
     if (!acc.get(todo.status)) {
       acc.set(todo.status, {
         id: todo.status,
@@ -43,9 +19,9 @@ export const getTodosGroupedByColumn = async () => {
     });
 
     return acc;
-  }, new Map<TypedColumn, Column>());
+  }, new Map<TaskStatus, IColumn>());
 
-  const columnTypes: TypedColumn[] = ['todo', 'inProgress', 'done'];
+  const columnTypes: TaskStatus[] = ['todo', 'inProgress', 'done'];
 
   for (const columnType of columnTypes) {
     if (!columns.get(columnType)) {
@@ -62,7 +38,7 @@ export const getTodosGroupedByColumn = async () => {
     }),
   );
 
-  const board: Board = {
+  const board: IBoard = {
     columns: sortedColumns,
   };
 
