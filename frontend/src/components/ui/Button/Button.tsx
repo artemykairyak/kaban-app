@@ -12,6 +12,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: { src: string };
   className?: string;
   iconClassName?: string;
+  square?: boolean;
 }
 
 export const Button: FC<ButtonProps> = ({
@@ -23,6 +24,7 @@ export const Button: FC<ButtonProps> = ({
   onClick,
   disabled,
   children,
+  square = false,
   ...props
 }) => {
   return (
@@ -31,6 +33,7 @@ export const Button: FC<ButtonProps> = ({
         s.button,
         kind === 'primary' ? s.primaryButton : s.secondaryButton,
         className,
+        { [s.square]: square },
       )}
       onClick={onClick}
       disabled={disabled}

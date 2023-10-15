@@ -18,15 +18,23 @@
 
 .label {
   margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .input {
 
 }
 
+.checkboxInput {
+  height: 25px;
+  font-size: 12px;
+  padding: 0 10px;
+}
+
 .statusList {
   display: flex;
-  flex-direction: column;
   gap: 5px;
 }
 
@@ -61,4 +69,21 @@
   &:focus {
     border-color: var(--gray30);
   }
+}
+
+.listItem {
+  display: flex;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+
+.deleteIcon {
+  width: 25px;
+  height: 25px;
+}
+
+.deleteBtn {
+  padding: 0;
+  width: 25px;
+  height: 25px;
 }

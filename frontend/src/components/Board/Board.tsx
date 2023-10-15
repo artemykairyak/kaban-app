@@ -5,23 +5,23 @@ import { useEffect, useState } from 'react';
 import s from './styles.module.scss';
 import { Column } from './components/Column/Column';
 import { Modal } from '@/components/Modal/Modal';
-import { AddTodoModal } from '@/components/Board/components/AddTodoModal/AddTodoModal';
+import { TaskModal } from '@/components/Board/components/AddTodoModal/TaskModal';
 import { Button } from '@/components/ui/Button/Button';
 import { IColumn } from '@/types/types';
 import { useSession } from 'next-auth/react';
 
 export const Board = () => {
   const { data } = useSession();
-  const { board, getBoard, setBoardState, updateTodo } = useBoardStore(
-    ({ board, getBoard, setBoardState, updateTodo }) => ({
+  const { board, getBoard, setBoardState, updateTask } = useBoardStore(
+    ({ board, getBoard, setBoardState, updateTask }) => ({
       board,
       getBoard,
       setBoardState,
-      updateTodo,
+      updateTask,
     }),
   );
 
-  const [isOpenedModal, setIsOpenedModal] = useState(false);
+  const [openedModal, setOpenedModal] = useState<'add' | 'edit' | ''>('');
 
   useEffect(() => {
     if (data?.user.id) {
@@ -44,12 +44,12 @@ export const Board = () => {
 
     const startCol: IColumn = {
       id: startColIndex[0],
-      todos: startColIndex[1].todos,
+      tasks: startColIndex[1].tasks,
     };
 
     const finishCol: IColumn = {
       id: finishColIndex[0],
-      todos: finishColIndex[1].todos,
+      tasks: finishColIndex[1].tasks,
     };
 
     if (!startCol || !finishCol) {
@@ -60,36 +60,37 @@ export const Board = () => {
       return;
     }
 
-    const newTodos = startCol.todos;
-    const [todoMoved] = newTodos.splice(source.index, 1);
+    const newTodos = startCol.tasks;
+    const [movedTask] = newTodos.splice(source.index, 1);
 
     if (startCol.id === finishCol.id) {
-      newTodos.splice(destination.index, 0, todoMoved);
+      newTodos.splice(destination.index, 0, movedTask);
 
-      const newCol: IColumn = { id: startCol.id, todos: newTodos };
+      const newCol: IColumn = { id: startCol.id, tasks: newTodos };
       const newColumns = new Map(board.columns);
       newColumns.set(startCol.id, newCol);
 
       setBoardState({ ...board, columns: newColumns });
     } else {
-      const finishTodos = [...finishCol.todos];
-      finishTodos.splice(destination.index, 0, todoMoved);
+      const finalTasks = [...finishCol.tasks];
+      finalTasks.splice(destination.index, 0, movedTask);
 
       const newColumns = new Map(board.columns);
-      const newCol: IColumn = { id: startCol.id, todos: newTodos };
+      const newCol: IColumn = { id: startCol.id, tasks: newTodos };
 
       newColumns.set(startCol.id, newCol);
       newColumns.set(finishCol.id, {
         id: finishCol.id,
-        todos: finishTodos,
+        tasks: finalTasks,
       });
 
-      //todo: update db
-
-      updateTodo(todoMoved, finishCol.id);
-
+      updateTask(movedTask, finishCol.id);
       setBoardState({ ...board, columns: newColumns });
     }
+  };
+
+  const onEditTask = () => {
+    setOpenedModal('edit');
   };
 
   console.log('BOARD', board);
@@ -99,7 +100,7 @@ export const Board = () => {
       <div className={s.container}>
         <div className={s.header}>
           <h1>Board</h1>
-          <Button kind="primary" onClick={() => setIsOpenedModal(true)}>
+          <Button kind="primary" onClick={() => setOpenedModal('add')}>
             Add task
           </Button>
         </div>
@@ -116,9 +117,10 @@ export const Board = () => {
                     <Column
                       id={id}
                       key={id}
-                      todos={column.todos}
+                      tasks={column.tasks}
                       index={index}
                       className={s.column}
+                      onEditTask={onEditTask}
                     />
                   );
                 })}
@@ -127,8 +129,8 @@ export const Board = () => {
           </Droppable>
         </DragDropContext>
       </div>
-      <Modal isOpen={isOpenedModal} onClose={() => setIsOpenedModal(false)}>
-        <AddTodoModal onClose={() => setIsOpenedModal(false)} />
+      <Modal isOpen={!!openedModal} onClose={() => setOpenedModal('')}>
+        <TaskModal onClose={() => setOpenedModal('')} />
       </Modal>
     </>
   );

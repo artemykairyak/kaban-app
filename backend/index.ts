@@ -7,7 +7,6 @@ import * as cookieParser from "cookie-parser";
 import { authController } from "./src/controllers/authController";
 import { userController } from "./src/controllers/userController";
 import { boardController } from "./src/controllers/boardController";
-import * as jwt from "jsonwebtoken";
 import { Request } from "express";
 
 dotenv.config();

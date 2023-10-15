@@ -1,22 +1,16 @@
 import { Task, TaskStatus } from '@commonTypes/Task';
 import { IBoard, IColumn } from '@/types/types';
 
-export const getTodosGroupedByColumn = (tasks: Task[]) => {
-  const columns = tasks.reduce((acc, todo) => {
-    if (!acc.get(todo.status)) {
-      acc.set(todo.status, {
-        id: todo.status,
-        todos: [],
+export const getTasksGroupedByColumn = (tasks: Task[]) => {
+  const columns = tasks.reduce((acc, task) => {
+    if (!acc.get(task.status)) {
+      acc.set(task.status, {
+        id: task.status,
+        tasks: [],
       });
     }
 
-    acc.get(todo.status)!.todos.push({
-      id: todo.id,
-      title: todo.title,
-      status: todo.status,
-      description: todo.description,
-      ...(todo.image && { image: JSON.parse(todo.image) }),
-    });
+    acc.get(task.status)!.tasks.push(task);
 
     return acc;
   }, new Map<TaskStatus, IColumn>());
@@ -27,7 +21,7 @@ export const getTodosGroupedByColumn = (tasks: Task[]) => {
     if (!columns.get(columnType)) {
       columns.set(columnType, {
         id: columnType,
-        todos: [],
+        tasks: [],
       });
     }
   }

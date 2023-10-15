@@ -23,6 +23,9 @@ const taskSchema: Schema<DbTask> = new Schema({
   color: {
     type: String,
   },
+  list: {
+    type: Object,
+  },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

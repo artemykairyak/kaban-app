@@ -7,7 +7,7 @@ export interface IUser extends User {
 
 export interface IColumn {
   id: TaskStatus;
-  todos: Task[];
+  tasks: Task[];
 }
 
 export interface IBoard {

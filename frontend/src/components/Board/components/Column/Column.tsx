@@ -4,14 +4,15 @@ import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { FC, memo, useMemo } from 'react';
 import s from './styles.module.scss';
 import clsx from 'clsx';
-import { TodoCard } from '../TodoCard/TodoCard';
+import { TaskCard } from '../TodoCard/TaskCard';
 import { useBoardStore } from '@/store/BoardStore';
 import { Task, TaskStatus } from '@commonTypes/Task';
 
 interface ColumnProps {
   id: TaskStatus;
-  todos: Task[];
+  tasks: Task[];
   index: number;
+  onEditTask: VoidFunction;
   className?: string;
 }
 
@@ -22,20 +23,18 @@ const columnName: Record<TaskStatus, string> = {
 };
 
 export const Column: FC<ColumnProps> = memo(
-  ({ id, index, todos, className }) => {
+  ({ id, index, tasks, className, onEditTask }) => {
     const { searchString } = useBoardStore(({ searchString }) => ({
       searchString,
     }));
 
-    console.log('RERENDER', id, todos);
-
     const todosCount = useMemo(() => {
       return searchString
-        ? todos.filter((todo) =>
+        ? tasks.filter((todo) =>
             todo.title.toLowerCase().includes(searchString.toLowerCase()),
           ).length
-        : todos.length;
-    }, [searchString, todos.length]);
+        : tasks.length;
+    }, [searchString, tasks.length]);
 
     return (
       <div className={className}>
@@ -54,10 +53,10 @@ export const Column: FC<ColumnProps> = memo(
                   <span className={s.count}>{todosCount}</span>
                 </h2>
                 <div className={s.cards}>
-                  {todos.map((todo, index) => {
+                  {tasks.map((task, index) => {
                     if (
                       searchString &&
-                      !todo.title
+                      !task.title
                         .toLowerCase()
                         .includes(searchString.toLowerCase())
                     ) {
@@ -65,20 +64,20 @@ export const Column: FC<ColumnProps> = memo(
                     }
                     return (
                       <Draggable
-                        draggableId={todo.id}
+                        draggableId={task.id}
                         index={index}
-                        key={todo.id}
+                        key={task.id}
                       >
                         {(provided) => {
-                          console.log('todo', todo);
                           return (
-                            <TodoCard
-                              todo={todo}
+                            <TaskCard
+                              task={task}
                               index={index}
                               id={id}
                               innerRef={provided.innerRef}
                               draggableProps={provided.draggableProps}
                               dragHandleProps={provided.dragHandleProps}
+                              onClick={onEditTask}
                             />
                           );
                         }}

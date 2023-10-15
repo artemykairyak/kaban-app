@@ -19,7 +19,7 @@
   color: var(--text-color);
   transition: all .2s;
 
-  &:focus {
+  &:focus:not(.error) {
     border-color: var(--gray30);
   }
 }
@@ -33,4 +33,5 @@
 }
 
 .error {
+  border-color: var(--red40);
 }

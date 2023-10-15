@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { getTodosGroupedByColumn } from '@/utils/utils';
+import { getTasksGroupedByColumn } from '@/utils/utils';
 import { Task, TaskStatus } from '@commonTypes/Task';
 import { IBoard, IColumn, TasksData } from '@/types/types';
 import { instance } from '@/services/apiService/apiService';
@@ -12,9 +12,11 @@ interface BoardState {
   searchString: string;
   setSearchString: (searchString: string) => void;
 
-  addTodo: (userId: string, task: Task) => void;
-  updateTodo: (todo: Task, columnId: TaskStatus) => void;
-  deleteTodo: (taskIndex: number, todo: Task, id: TaskStatus) => void;
+  addTask: (userId: string, task: Task) => void;
+  editingTask: Task;
+  setEditingTask: (id: string, status: TaskStatus) => void;
+  updateTask: (task: Task, columnId: TaskStatus) => void;
+  deleteTask: (taskIndex: number, task: Task, id: TaskStatus) => void;
 }
 
 export const useBoardStore = create<BoardState>((set, get) => ({
@@ -23,17 +25,31 @@ export const useBoardStore = create<BoardState>((set, get) => ({
   },
   searchString: '',
   setSearchString: (searchString) => set({ searchString }),
-  getBoard: async (userId: string) => {
+  getBoard: async (userId) => {
     const { data } = await instance.get<TasksData>(`/tasks/${userId}`);
 
     if (data.tasks) {
-      const board = await getTodosGroupedByColumn(data.tasks);
+      const board = await getTasksGroupedByColumn(data.tasks);
 
       set({ board });
     }
   },
   setBoardState: (board) => set({ board }),
-  addTodo: async (userId, task) => {
+  editingTask: null,
+  setEditingTask: (id, status) => {
+    set((state) => {
+      const findedTask = state.board.columns
+        .get(status)
+        .tasks.find((item) => item.id === id);
+
+      if (findedTask) {
+        return { editingTask: { ...findedTask } };
+      }
+
+      return state;
+    });
+  },
+  addTask: async (userId, task) => {
     const { data: newTask } = await instance.post<Task>(`/tasks/${userId}`, {
       ...task,
     });
@@ -48,10 +64,10 @@ export const useBoardStore = create<BoardState>((set, get) => ({
         if (!column) {
           newColumns.set(columnId, {
             id: columnId,
-            todos: [newTask],
+            tasks: [newTask],
           });
         } else {
-          newColumns.get(columnId)?.todos.push(newTask);
+          newColumns.get(columnId)?.tasks.push(newTask);
         }
       }
 
@@ -62,20 +78,20 @@ export const useBoardStore = create<BoardState>((set, get) => ({
       };
     });
   },
-  updateTodo: async (todo, columnId) => {
+  updateTask: async (task, columnId) => {
     //  todo: update
 
-    const newTodo = { title: todo.title, status: columnId };
+    const newTodo = { title: task.title, status: columnId };
   },
-  deleteTodo: async (taskIndex: number, todo: Task, id: TaskStatus) => {
+  deleteTask: async (taskIndex, task, id) => {
     const { data: isSuccess } = await instance.delete<boolean>(
-      `/tasks/${todo.id}`,
+      `/tasks/${task.id}`,
     );
 
     if (isSuccess) {
       const newColumns = new Map(get().board.columns);
 
-      newColumns.get(id)?.todos.splice(taskIndex, 1);
+      newColumns.get(id)?.tasks.splice(taskIndex, 1);
 
       set({ board: { columns: newColumns } });
     }

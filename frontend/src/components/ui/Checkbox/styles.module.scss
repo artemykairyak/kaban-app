@@ -1,0 +1,23 @@
+.checkbox {
+  width: 25px;
+  height: 25px;
+  border: 1px solid var(--gray15);
+  border-radius: 3px;
+  position: relative;
+  cursor: pointer;
+
+  &:after {
+    content: "";
+    background-color: var(--green60);
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    display: none;
+  }
+
+  &:checked:after {
+    display: block;
+  }
+}
