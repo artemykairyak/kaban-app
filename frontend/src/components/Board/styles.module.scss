@@ -1,19 +1,25 @@
 .container {
-  padding: 15px;
+  padding: 40px 48px;
   height: 100%;
   width: 100%;
+}
+
+.title {
+  font-size: 46px;
+  font-weight: 600;
+  text-transform: capitalize;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 40px;
 }
 
 .board {
   display: flex;
-  gap: 3%;
+  gap: 2%;
 }
 
 .column {

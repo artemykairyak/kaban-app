@@ -1,7 +1,7 @@
 import mongoose, { Model, model, Schema, Types } from "mongoose";
 import { Task } from "@commonTypes/Task";
 
-interface DbTask extends Task {
+export interface DbTask extends Task {
   userId: Types.ObjectId;
 }
 
@@ -25,6 +25,12 @@ const taskSchema: Schema<DbTask> = new Schema({
   },
   list: {
     type: Object,
+  },
+  order: {
+    type: Number,
+  },
+  createdAt: {
+    type: Date,
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,

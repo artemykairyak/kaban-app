@@ -7,26 +7,30 @@ import { addTaskSchema } from '@/components/Board/components/AddTodoModal/valida
 import { Label } from '@/components/ui/Label/Label';
 import clsx from 'clsx';
 import { useBoardStore } from '@/store/BoardStore';
-import { ListItem, ListItems, Task } from '@commonTypes/Task';
+import { ListItem, ListItems, Task, TaskStatus } from '@commonTypes/Task';
 import { useSession } from 'next-auth/react';
-import { FC, useMemo, useState } from 'react';
+import { FC, MouseEvent, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/Button/Button';
-import { Checkbox } from '@/components/ui/Checkbox/Checkbox';
-import { SVG } from '@/components/ui/SVG/SVG';
-import CloseIcon from '@/images/closeIcon.svg';
+import { formatDate } from '@/utils/utils';
+import { CheckList } from '@/components/Board/components/AddTodoModal/components/CheckList/CheckList';
 
-export const TaskModal: FC<{ onClose: VoidFunction }> = ({ onClose }) => {
-  const { addTask, updateTask, editingTask } = useBoardStore(
-    ({ addTask, updateTask, editingTask }) => ({
+interface TaskModalProps {
+  onClose: VoidFunction;
+  status: TaskStatus;
+}
+
+export const TaskModal: FC<TaskModalProps> = ({ onClose, status }) => {
+  const { addTask, updateTask, editingTask, board, deleteTask } = useBoardStore(
+    ({ board, addTask, updateTask, editingTask, deleteTask }) => ({
+      board,
       addTask,
       editingTask,
       updateTask,
+      deleteTask,
     }),
   );
 
-  const defaultValues = editingTask ? editingTask : { status: 'todo' };
-
-  console.log('EDITING', editingTask);
+  const defaultValues = editingTask ? editingTask : { status };
 
   const {
     register,
@@ -54,9 +58,10 @@ export const TaskModal: FC<{ onClose: VoidFunction }> = ({ onClose }) => {
     const task = { ...data, list: listItems } as Task;
 
     if (editingTask) {
-      updateTask(editingTask, editingTask.status);
+      updateTask(session.user.id, task, editingTask.status, task.order);
     } else {
-      addTask(session.user.id, task);
+      const tasksCount = board.columns.get(task.status).tasks.length;
+      addTask(session.user.id, task, tasksCount);
     }
 
     onClose();
@@ -74,26 +79,11 @@ export const TaskModal: FC<{ onClose: VoidFunction }> = ({ onClose }) => {
     }));
   };
 
-  const onChangeListItem = (id: string, value: string | boolean) => {
-    const newItems = { ...listItems };
-
-    if (typeof value === 'string') {
-      newItems[id] = { ...newItems[id], text: value };
-    } else {
-      newItems[id] = { ...newItems[id], checked: value };
-    }
-
-    setListItems(newItems);
+  const onDeleteTask = (e: MouseEvent) => {
+    e.stopPropagation();
+    deleteTask(editingTask.index, editingTask);
+    onClose();
   };
-
-  const onDeleteListItem = (id: string) => {
-    const newItems = { ...listItems };
-    delete newItems[id];
-
-    setListItems(newItems);
-  };
-
-  console.log(listItems);
 
   return (
     <form
@@ -101,7 +91,7 @@ export const TaskModal: FC<{ onClose: VoidFunction }> = ({ onClose }) => {
       className={s.form}
       noValidate={true}
     >
-      <span className={s.title}>New task</span>
+      <span className={s.title}>{editingTask ? 'Edit task' : 'New task'}</span>
       <div className={s.inputWrapper}>
         <Input
           name="title"
@@ -135,36 +125,7 @@ export const TaskModal: FC<{ onClose: VoidFunction }> = ({ onClose }) => {
         </div>
       </div>
       <div className={s.inputWrapper}>
-        {Object.entries(listItems).map(([id, item]) => {
-          return (
-            <div className={s.listItem} key={id}>
-              <Label className={s.label} htmlFor={`listItem${id}`}>
-                <Checkbox
-                  checked={item.checked}
-                  id={`listItem${id}`}
-                  onChange={({ target }) =>
-                    onChangeListItem(id, target.checked)
-                  }
-                />
-                <Input
-                  name={`listItemInput${id}`}
-                  value={item.text}
-                  onChange={(v) => onChangeListItem(id, v)}
-                  className={s.checkboxInput}
-                />
-              </Label>
-              <Button
-                type="button"
-                kind="secondary"
-                square={true}
-                className={s.deleteBtn}
-                onClick={() => onDeleteListItem(id)}
-              >
-                <SVG src={CloseIcon} className={s.deleteIcon} />
-              </Button>
-            </div>
-          );
-        })}
+        <CheckList listItems={listItems} setListItems={setListItems} />
         <Button
           kind="secondary"
           onClick={onAddListItem}
@@ -181,6 +142,16 @@ export const TaskModal: FC<{ onClose: VoidFunction }> = ({ onClose }) => {
       <Button kind="primary" type="submit">
         {editingTask ? 'Save task' : 'Add task'}
       </Button>
+      {editingTask && (
+        <Button kind="secondary" type="button" onClick={onDeleteTask}>
+          Delete task
+        </Button>
+      )}
+      {editingTask && (
+        <span className={s.date}>
+          Created: {formatDate(new Date(editingTask.createdAt))}
+        </span>
+      )}
     </form>
   );
 };

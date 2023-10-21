@@ -1,36 +1,67 @@
 .column {
-  background-color: var(--gray15);
-  padding: 10px;
-  border-radius: 7px;
-  border: 1px solid transparent;
+  background-color: var(--gray05);
+  padding: 20px;
+  border-radius: 16px;
+  border-style: dashed;
+  border-width: 1px;
+  border-color: transparent;
+  transition: all .2s;
+}
+
+.columnHeader {
+  display: flex;
+  align-items: center;
+  padding-bottom: 24px;
+  border-bottom-width: 3px;
+  border-bottom-style: solid;
+}
+
+.columnColor {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 100%;
+  margin-right: 8px;
 }
 
 .columnTitle {
-  font-size: 20px;
-  margin-bottom: 15px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  font-size: 16px;
+  font-weight: 500;
 }
 
 .count {
-  font-size: 16px;
-  border: 1px solid (var(--text-color));
   border-radius: 100%;
-  height: 30px;
-  width: 30px;
+  width: 20px;
+  height: 20px;
+  color: #625F6D;
+  font-weight: 500;
+  line-height: 20px;
+  font-size: 12px;
   display: flex;
   align-items: center;
+  background-color: #E0E0E0;
   justify-content: center;
+  margin-left: 12px;
+}
+
+.addTaskBtn {
+  margin-left: auto;
+}
+
+.addTaskIcon {
+  width: 24px;
+  height: 24px;
 }
 
 .cards {
+  padding-top: 28px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 13px;
 }
 
 .draggable {
-  background-color: var(--green20);
-  border: 1px dashed var(--gray40);
+  content: attr(data-color);
 }

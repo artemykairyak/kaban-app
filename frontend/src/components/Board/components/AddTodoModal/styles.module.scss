@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  position: relative;
 }
 
 .title {
@@ -21,6 +22,14 @@
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.date {
+  color: var(--gray30);
+  font-size: 12px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 
 .input {

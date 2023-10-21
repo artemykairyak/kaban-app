@@ -1,21 +1,21 @@
 .card {
   display: flex;
   flex-direction: column;
-  background-color: var(--gray30);
-  border-radius: 7px;
-  padding: 10px;
+  background-color: (var(--bg-color));
+  border-radius: 16px;
+  padding: 20px;
 }
 
 .title {
-  border-bottom: 1px solid var(--text-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 10px;
+
 }
 
 .titleText {
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: 600;
 }
 
 .deleteBtn {
@@ -24,4 +24,11 @@
   width: 25px;
   height: 25px;
   color: var(--white)
+}
+
+.desc {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 16px;
+  color: (var(--gray15))
 }

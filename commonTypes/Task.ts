@@ -12,6 +12,8 @@ export interface Task {
   title: string;
   status: TaskStatus;
   description: string;
+  order: number;
+  createdAt: Date;
   color?: string;
   image?: string;
   list?: ListItems;

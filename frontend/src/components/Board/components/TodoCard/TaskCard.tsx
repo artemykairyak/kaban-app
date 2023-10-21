@@ -4,17 +4,15 @@ import {
   DraggableProvidedDraggableProps,
   DraggableProvidedDragHandleProps,
 } from 'react-beautiful-dnd';
-import { FC, MouseEvent } from 'react';
-import { SVG } from '@/components/ui/SVG/SVG';
-import CloseIcon from '@/images/closeIconRounded.svg';
+import { FC } from 'react';
 import s from './styles.module.scss';
 import { useBoardStore } from '@/store/BoardStore';
-import { Task, TaskStatus } from '@commonTypes/Task';
+import { Task } from '@commonTypes/Task';
+import { cropText } from '@/utils/utils';
 
 interface TodoCardProps {
   task: Task;
   index: number;
-  id: TaskStatus;
   innerRef: (element: HTMLElement | null) => void;
   draggableProps: DraggableProvidedDraggableProps;
   dragHandleProps: DraggableProvidedDragHandleProps | null | undefined;
@@ -22,7 +20,6 @@ interface TodoCardProps {
 }
 
 export const TaskCard: FC<TodoCardProps> = ({
-  id,
   task,
   draggableProps,
   dragHandleProps,
@@ -30,26 +27,15 @@ export const TaskCard: FC<TodoCardProps> = ({
   index,
   onClick,
 }) => {
-  const { deleteTask, setEditingTask } = useBoardStore(
-    ({ deleteTask, setEditingTask }) => ({
-      deleteTask,
-      setEditingTask,
-    }),
-  );
+  const { title, description } = task;
+
+  const { setEditingTask } = useBoardStore(({ setEditingTask }) => ({
+    setEditingTask,
+  }));
 
   const onClickTask = () => {
-    setEditingTask(task.id, task.status);
+    setEditingTask(task, index);
     onClick();
-  };
-
-  const onDeleteTask = (
-    e: MouseEvent,
-    index: number,
-    task: Task,
-    id: TaskStatus,
-  ) => {
-    e.stopPropagation();
-    deleteTask(index, task, id);
   };
 
   return (
@@ -62,14 +48,9 @@ export const TaskCard: FC<TodoCardProps> = ({
       onClick={onClickTask}
     >
       <div className={s.title}>
-        <span className={s.titleText}>{task.title}</span>
-        <button
-          className={s.deleteBtn}
-          onClick={(e) => onDeleteTask(e, index, task, id)}
-        >
-          <SVG src={CloseIcon} />
-        </button>
+        <span className={s.titleText}>{title}</span>
       </div>
+      {description && <p className={s.desc}>{cropText(description)}</p>}
     </div>
   );
 };

@@ -5,8 +5,8 @@ import { Inter } from 'next/font/google';
 import { ReactNode } from 'react';
 
 const inter = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500', '700'],
+  subsets: ['latin', 'cyrillic'],
+  weight: ['400', '500', '600', '700'],
 });
 
 export const metadata: Metadata = {

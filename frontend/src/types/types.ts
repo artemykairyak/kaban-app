@@ -17,3 +17,6 @@ export interface IBoard {
 export interface TasksData {
   tasks: Task[];
 }
+
+export type ColumnColor = { default: string; trasparent: string };
+export type ColumnColorObj = Record<TaskStatus, ColumnColor>;

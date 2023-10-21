@@ -8,7 +8,6 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   loading?: boolean;
   disabled?: boolean;
-  onClick?: VoidFunction;
   icon?: { src: string };
   className?: string;
   iconClassName?: string;

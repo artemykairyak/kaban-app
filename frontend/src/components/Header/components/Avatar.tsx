@@ -24,12 +24,19 @@ export const Avatar: FC<AvatarProps> = ({ user, onClick }) => {
   }
 
   return (
-    <button className={s.avatar} onClick={onClick}>
-      {user.image ? (
-        <img className={s.img} src={user.image} alt={`${user.name}'s avatar`} />
-      ) : (
-        <span className={s.initials}>{getInitials(user.name)}</span>
-      )}
-    </button>
+    <div className={s.wrapper}>
+      <span className={s.name}>{user.name}</span>
+      <button className={s.avatar} onClick={onClick}>
+        {user.image ? (
+          <img
+            className={s.img}
+            src={user.image}
+            alt={`${user.name}'s avatar`}
+          />
+        ) : (
+          <span className={s.initials}>{getInitials(user.name)}</span>
+        )}
+      </button>
+    </div>
   );
 };

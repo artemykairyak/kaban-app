@@ -1,16 +1,15 @@
 'use client';
-import Logo from './images/logo.svg';
-import SearchIcon from './images/search.svg';
+import SearchIcon from '@/images/icons/searchIcon.svg';
 import s from './styles.module.scss';
 import { Avatar } from '@/components/Header/components/Avatar';
 import { useBoardStore } from '@/store/BoardStore';
 import { Input } from '@/components/ui/Input/Input';
-import { useAuthStore } from '@/store/AuthStore';
 import { AuthModal } from '@/components/Header/components/AuthModal/AuthModal';
 import { Modal } from '@/components/Modal/Modal';
 import { useState } from 'react';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { signOut, useSession } from 'next-auth/react';
+import { HEADER_HEIGHT } from '@/constants/constants';
 
 export const Header = () => {
   useProtectedRoute();
@@ -26,8 +25,6 @@ export const Header = () => {
 
   const [isOpenedModal, setIsOpenedModal] = useState(false);
 
-  console.log('USER', data?.user);
-
   const onClickAvatar = () => {
     if (!data?.user) {
       setIsOpenedModal(true);
@@ -39,10 +36,7 @@ export const Header = () => {
 
   return (
     <>
-      <header className={s.header}>
-        <a className={s.logo} href="/">
-          <img src={Logo.src} alt="Kaban logo" className={s.logoPic} /> Kaban
-        </a>
+      <header className={s.header} style={{ height: HEADER_HEIGHT }}>
         <div className={s.controls}>
           <form className={s.search}>
             <Input

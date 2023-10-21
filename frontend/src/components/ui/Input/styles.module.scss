@@ -12,24 +12,28 @@
 }
 
 .input {
-  border-radius: 5px;
-  background-color: var(--gray10);
-  border: 1px solid var(--gray15);
+  border-radius: 6px;
+  background-color: var(--gray05);
   padding: 10px 30px 10px 15px;
-  color: var(--text-color);
-  transition: all .2s;
+  color: var(--gray15);
+  font-size: 14px;
+
 
   &:focus:not(.error) {
-    border-color: var(--gray30);
+    outline: 1px solid var(--gray30);
   }
+}
+
+.withIcon {
+  padding-left: 50px;
 }
 
 .icon {
   position: absolute;
-  width: 20px;
-  bottom: 6px;
-  right: 7px;
-  color: var(--text-color)
+  width: 22px;
+  bottom: 4px;
+  left: 16px;
+  color: var(--gray15)
 }
 
 .error {

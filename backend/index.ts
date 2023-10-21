@@ -43,6 +43,13 @@ app.post("/tasks/:userId", async (req: Request, res) => {
   res.send(newTask);
 });
 
+app.put("/tasks/:userId/:taskId", async (req: Request, res) => {
+  const { userId, taskId } = req.params;
+  const newTask = await boardController.updateTask(userId, taskId, req.body);
+
+  res.send(newTask);
+});
+
 app.delete("/tasks/:taskId", async (req: Request, res) => {
   const isSuccess = await boardController.deleteTask(req.params.taskId);
 
