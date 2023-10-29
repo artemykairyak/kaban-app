@@ -14,9 +14,10 @@ export interface IBoard {
   columns: Map<TaskStatus, IColumn>;
 }
 
-export interface TasksData {
-  tasks: Task[];
-}
-
 export type ColumnColor = { default: string; trasparent: string };
 export type ColumnColorObj = Record<TaskStatus, ColumnColor>;
+
+export interface BaseResponse<T> {
+  isSuccess: boolean;
+  data: T;
+}

@@ -64,6 +64,15 @@
   color: var(--gray15);
   font-size: 16px;
   font-weight: 600;
+  transition: background-color .2s;
+
+  &:hover {
+    background-color: var(--gray05);
+
+    .deleteBtn {
+      opacity: 1;
+    }
+  }
 }
 
 .projectColor {
@@ -73,7 +82,28 @@
   border-radius: 100%;
 }
 
+.projectTitle {
+  flex-grow: 1;
+  text-align: left;
+}
+
 .selected {
   color: var(--text-color);
-  background-color: rgba(80, 48, 229, 0.08);
+  background-color: var(--light-purple);
+}
+
+.deleteBtn {
+  opacity: 0;
+  transition: opacity .2s;
+}
+
+.deleteIcon {
+  width: 20px;
+  height: 20px;
+  color: var(--red40);
+  margin-left: auto;
+}
+
+.modal {
+  width: 50%;
 }

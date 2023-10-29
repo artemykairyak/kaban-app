@@ -3,6 +3,7 @@ import { Task } from "@commonTypes/Task";
 
 export interface DbTask extends Task {
   userId: Types.ObjectId;
+  projectId: Types.ObjectId;
 }
 
 const taskSchema: Schema<DbTask> = new Schema({
@@ -32,11 +33,20 @@ const taskSchema: Schema<DbTask> = new Schema({
   createdAt: {
     type: Date,
   },
+  priority: {
+    type: String,
+  },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
+  projectId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Project",
+    required: true,
+  },
+  comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
 });
 
 taskSchema.set("toJSON", {

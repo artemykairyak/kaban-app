@@ -1,0 +1,47 @@
+.comment {
+
+}
+
+.info {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 7px;
+}
+
+.author {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.date {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray15)
+}
+
+.content {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px
+}
+
+.text {
+  background-color: var(--light-purple);
+  padding: 10px 15px;
+  font-size: 14px;
+  border-radius: 6px;
+  flex-grow: 1;
+}
+
+.deleteBtn {
+  color: var(--red40);
+  width: 25px;
+  height: 25px;
+
+  &:hover {
+    color: var(--red40);
+  }
+}

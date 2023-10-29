@@ -7,21 +7,36 @@
 .title {
   font-size: 46px;
   font-weight: 600;
-  text-transform: capitalize;
+  border-radius: 6px;
+  outline: none;
+}
+
+.titleInput {
+  font-size: 46px;
+  font-weight: 600;
+  display: inline;
+  background: var(--white);
+  color: var(--text-color)
 }
 
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   margin-bottom: 40px;
+  gap: 20px;
 }
 
 .board {
   display: flex;
   gap: 2%;
+  height: 85%;
+  min-height: 85%;
 }
 
 .column {
   width: calc(100% / 3)
+}
+
+.editIcon {
+  color: var(--purple);
 }

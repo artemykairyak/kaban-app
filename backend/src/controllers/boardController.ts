@@ -1,20 +1,38 @@
 import { TaskModel } from "../models/TaskModel";
 import { UserModel } from "../models/UserModel";
 import { Task } from "@commonTypes/Task";
+import { ProjectModel } from "../models/ProjectModel";
+import { CommentModel } from "../models/CommentModel";
 
 export const boardController = {
-  getTasksByUserId: async (userId: string) => {
-    if (userId) {
-      return TaskModel.find({ userId }).sort({ order: 1 });
+  getTasksByProjectId: async (userId: string, projectId: string) => {
+    if (userId && projectId) {
+      return TaskModel.find({ userId, projectId }).sort({ order: 1 });
     }
 
     return [];
   },
-  addTask: async (userId: string, task: Task) => {
-    const isUserExist = await UserModel.findOne({ _id: userId });
+  getTaskById: async (userId: string, taskId: string) => {
+    if (userId && taskId) {
+      return await TaskModel.findOne({ userId, _id: taskId })
+        .populate({
+          path: "comments",
+          model: "Comment",
+          populate: {
+            path: "author",
+          },
+        })
+        .exec();
+    }
 
-    if (isUserExist) {
-      return await TaskModel.create({ userId, ...task });
+    return null;
+  },
+  addTask: async (userId: string, projectId: string, task: Task) => {
+    const isUserExist = await UserModel.findOne({ _id: userId });
+    const isProjectExists = await ProjectModel.findOne({ _id: projectId });
+
+    if (isUserExist && isProjectExists) {
+      return await TaskModel.create({ userId, projectId, ...task });
     }
   },
   updateTask: async (userId: string, taskId: string, task: Task) => {
@@ -42,7 +60,6 @@ export const boardController = {
       await TaskModel.updateOne({ userId, _id: taskId }, task);
     } else {
       if (task.order < prevTask.order) {
-        console.log("< INDEX");
         const filter = { order: { $gte: task.order }, status: task.status };
         const update = { $inc: { order: 1 } };
 
@@ -52,7 +69,6 @@ export const boardController = {
       }
 
       if (task.order > prevTask.order) {
-        console.log("> INDEX");
         const filter = { order: { $lte: task.order }, status: task.status };
         const update = { $inc: { order: -1 } };
 
@@ -69,6 +85,7 @@ export const boardController = {
   },
   deleteTask: async (taskId: string) => {
     const deletedTask = await TaskModel.deleteOne({ _id: taskId });
+    await CommentModel.deleteMany({ taskId });
 
     return !!deletedTask;
   },

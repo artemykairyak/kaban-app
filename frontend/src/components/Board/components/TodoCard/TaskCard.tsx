@@ -29,12 +29,12 @@ export const TaskCard: FC<TodoCardProps> = ({
 }) => {
   const { title, description } = task;
 
-  const { setEditingTask } = useBoardStore(({ setEditingTask }) => ({
-    setEditingTask,
+  const { getEditingTask } = useBoardStore(({ getEditingTask }) => ({
+    getEditingTask,
   }));
 
   const onClickTask = () => {
-    setEditingTask(task, index);
+    getEditingTask(task.id, index);
     onClick();
   };
 

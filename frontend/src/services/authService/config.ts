@@ -36,11 +36,9 @@ export const authConfig = {
           '/signIn',
           profile,
         );
-        console.log('RESSS', data);
 
         return true;
       } catch (error) {
-        console.log('catsh', error);
         return false;
       }
     },

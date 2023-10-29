@@ -5,16 +5,19 @@ import s from './styles.module.scss';
 import { Column } from './components/Column/Column';
 import { Modal } from '@/components/Modal/Modal';
 import { TaskModal } from '@/components/Board/components/AddTodoModal/TaskModal';
-import { useSession } from 'next-auth/react';
 import { useProjectsStore } from '@/store/ProjectsStore';
 import { useBoardHandlers } from '@/components/Board/hooks/useBoardHandlers';
+import { SVG } from '@/components/ui/SVG/SVG';
+import EditIcon from '@/images/icons/editIcon.svg';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
 export const Board = () => {
-  const { data: session } = useSession();
-  const { selectedProject } = useProjectsStore(({ selectedProject }) => ({
-    selectedProject,
-  }));
+  const { selectedProject, editProject } = useProjectsStore((state) => state);
   const board = useBoardStore((state) => state.board);
+
+  const titleRef = useRef<HTMLInputElement>(null);
+
+  const [isEditingTitle, setEditingTitle] = useState(false);
 
   const {
     handleOnDragEnd,
@@ -23,15 +26,43 @@ export const Board = () => {
     onCloseModal,
     openedModal,
     newTaskStatus,
-  } = useBoardHandlers(session);
+  } = useBoardHandlers();
 
   console.log('BOARD', board.columns);
+
+  const onEditTitle = (e: ChangeEvent<HTMLInputElement>) => {
+    editProject(e.target.value);
+    setEditingTitle(false);
+  };
+
+  useEffect(() => {
+    if (isEditingTitle) {
+      titleRef.current.value = selectedProject?.title;
+      titleRef.current.focus();
+    }
+  }, [isEditingTitle]);
 
   return (
     <>
       <div className={s.container}>
         <div className={s.header}>
-          <h1 className={s.title}>{selectedProject?.title}</h1>
+          {isEditingTitle ? (
+            <input
+              ref={titleRef}
+              type="text"
+              onBlur={onEditTitle}
+              className={s.titleInput}
+            />
+          ) : (
+            <h1 ref={titleRef} className={s.title}>
+              {selectedProject?.title}
+            </h1>
+          )}
+          {!isEditingTitle && (
+            <button onClick={() => setEditingTitle(true)}>
+              <SVG src={EditIcon} className={s.editIcon} />
+            </button>
+          )}
         </div>
         <DragDropContext onDragEnd={handleOnDragEnd}>
           <Droppable direction="horizontal" droppableId="board" type="column">

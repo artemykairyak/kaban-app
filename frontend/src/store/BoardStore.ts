@@ -1,27 +1,33 @@
-import { create, useStore } from 'zustand';
+import { create } from 'zustand';
 import { getTasksGroupedByColumn } from '@/utils/utils';
 import { Task, TaskStatus } from '@commonTypes/Task';
-import { IBoard, IColumn, TasksData } from '@/types/types';
+import { BaseResponse, IBoard, IColumn } from '@/types/types';
 import { instance } from '@/services/apiService/apiService';
+import { useAuthStore } from '@/store/AuthStore';
+import { useProjectsStore } from '@/store/ProjectsStore';
+import { IComment } from '@commonTypes/Comment';
 
 interface BoardState {
   board: IBoard;
-  getBoard: (userId: string) => void;
+  getBoard: VoidFunction;
   setBoardState: (board: IBoard) => void;
 
   searchString: string;
   setSearchString: (searchString: string) => void;
 
-  addTask: (userId: string, task: Task, tasksCount: number) => void;
+  addTask: (task: Task) => void;
   editingTask: Task & { index: number };
-  setEditingTask: (task: Task | null, index?: number) => void;
+  getEditingTask: (taskId?: string, index?: number) => void;
   updateTask: (
     userId: string,
     task: Task,
     columnId: TaskStatus,
     taskIndex: number,
   ) => void;
-  deleteTask: (taskIndex: number, task: Task) => void;
+  deleteTask: (task: Task & { index: number }) => void;
+
+  addComment: (comment: string) => Promise<boolean>;
+  deleteComment: (commentId: string) => Promise<boolean>;
 }
 
 export const useBoardStore = create<BoardState>((set, get) => ({
@@ -30,27 +36,48 @@ export const useBoardStore = create<BoardState>((set, get) => ({
   },
   searchString: '',
   setSearchString: (searchString) => set({ searchString }),
-  getBoard: async (userId) => {
-    const { data } = await instance.get<TasksData>(`/tasks/${userId}`);
+  getBoard: async () => {
+    const userId = useAuthStore.getState().user.id;
+    const projectId = useProjectsStore.getState().selectedProject.id;
 
-    if (data.tasks) {
-      const board = await getTasksGroupedByColumn(data.tasks);
+    const { data } = await instance.get<BaseResponse<Task[]>>(
+      `/tasks/${userId}?projectId=${projectId}`,
+    );
+
+    if (data.isSuccess) {
+      const board = await getTasksGroupedByColumn(data.data);
 
       set({ board });
     }
   },
   setBoardState: (board) => set({ board }),
   editingTask: null,
-  setEditingTask: (task, index?: number) => {
+  getEditingTask: async (taskId?, index?: number) => {
+    if (!taskId) {
+      set(() => ({ editingTask: null }));
+      return;
+    }
+
+    const userId = useAuthStore.getState().user.id;
+
+    const { data } = await instance.get<BaseResponse<Task>>(
+      `/tasks/${userId}?taskId=${taskId}`,
+    );
+
     set(() => {
-      if (task) {
-        return { editingTask: { ...task, index } };
+      if (data.isSuccess) {
+        return { editingTask: { ...data.data, index } };
       }
 
       return { editingTask: null };
     });
   },
-  addTask: async (userId, task, tasksCount) => {
+  addTask: async (task) => {
+    const userId = useAuthStore.getState().user.id;
+    const tasksCount = useBoardStore.getState().board.columns.get(task.status)
+      .tasks.length;
+    const projectId = useProjectsStore.getState().selectedProject.id;
+
     const newTask: Task = {
       ...task,
       order: tasksCount,
@@ -58,7 +85,7 @@ export const useBoardStore = create<BoardState>((set, get) => ({
     };
 
     const { data: createdTask } = await instance.post<Task>(
-      `/tasks/${userId}`,
+      `/tasks/${userId}/${projectId}`,
       newTask,
     );
 
@@ -87,15 +114,24 @@ export const useBoardStore = create<BoardState>((set, get) => ({
     });
   },
   updateTask: async (userId, task, columnId, taskIndex) => {
-    console.log('update', task, columnId, taskIndex);
+    const filteredList = {};
+
+    for (const key in task.list) {
+      const value = task.list[key];
+
+      if (value.text) {
+        filteredList[key] = value;
+      }
+    }
 
     const newTask: Task = {
       ...task,
       order: taskIndex,
-      status: columnId,
+      status: task.status,
+      list: filteredList,
     };
 
-    console.log('NRW', newTask);
+    delete newTask.comments;
 
     const { data: isSuccess } = await instance.put<boolean>(
       `/tasks/${userId}/${task.id}`,
@@ -104,38 +140,75 @@ export const useBoardStore = create<BoardState>((set, get) => ({
 
     const newColumns = new Map(get().board.columns);
 
-    const newTasks = newColumns.get(columnId)?.tasks?.map((item) => {
-      if (item.id === newTask.id) {
-        return { ...newTask };
-      }
+    newColumns.get(columnId).tasks = newColumns
+      .get(columnId)
+      ?.tasks?.map((item) => {
+        if (item.id === newTask.id) {
+          return { ...newTask };
+        }
 
-      return item;
-    });
-
-    const newColumnWithTasks = (newColumns.get(columnId).tasks = newTasks);
-
-    console.log(newColumnWithTasks);
+        return item;
+      });
 
     set((state) => {
       return { board: { ...state.board } };
     });
 
-    console.log('UPD', isSuccess);
     if (!isSuccess) {
       console.log('ERROR UPD');
     }
   },
-  deleteTask: async (taskIndex, task) => {
-    const { data: isSuccess } = await instance.delete<boolean>(
+  deleteTask: async (task) => {
+    const { data } = await instance.delete<BaseResponse<null>>(
       `/tasks/${task.id}`,
     );
 
-    if (isSuccess) {
+    if (data.isSuccess) {
       const newColumns = new Map(get().board.columns);
 
-      newColumns.get(task.status)?.tasks.splice(taskIndex, 1);
+      newColumns.get(task.status)?.tasks.splice(task.index, 1);
 
       set({ board: { columns: newColumns } });
     }
+  },
+  addComment: async (comment) => {
+    const userId = useAuthStore.getState().user.id;
+    const taskId = useBoardStore.getState().editingTask.id;
+
+    const { data } = await instance.post<BaseResponse<IComment>>(
+      `/comments/${userId}/${taskId}`,
+      { text: comment },
+    );
+
+    if (data.isSuccess) {
+      set((state) => ({
+        editingTask: {
+          ...state.editingTask,
+          comments: [...state.editingTask.comments, data.data],
+        },
+      }));
+    }
+
+    return data.isSuccess;
+  },
+  deleteComment: async (commentId) => {
+    const userId = useAuthStore.getState().user.id;
+
+    const { data } = await instance.delete<BaseResponse<boolean>>(
+      `/comments/${userId}/${commentId}`,
+    );
+
+    if (data.isSuccess) {
+      set((state) => ({
+        editingTask: {
+          ...state.editingTask,
+          comments: state.editingTask.comments.filter(
+            (item) => item.id !== commentId,
+          ),
+        },
+      }));
+    }
+
+    return data.isSuccess;
   },
 }));

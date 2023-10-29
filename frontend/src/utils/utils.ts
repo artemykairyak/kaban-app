@@ -40,7 +40,7 @@ export const getTasksGroupedByColumn = (tasks: Task[]) => {
 };
 
 export const formatDate = (date: Date) => {
-  const options = {
+  const options: Intl.DateTimeFormatOptions = {
     day: '2-digit',
     month: 'long',
     year: 'numeric',
@@ -57,4 +57,8 @@ export const cropText = (text: string, maxLength = 103, ellipsis = '...') => {
   } else {
     return text;
   }
+};
+
+export const generateColor = () => {
+  return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
 };

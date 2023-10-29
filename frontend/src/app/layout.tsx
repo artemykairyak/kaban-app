@@ -7,6 +7,7 @@ import { ReactNode } from 'react';
 const inter = Inter({
   subsets: ['latin', 'cyrillic'],
   weight: ['400', '500', '600', '700'],
+  variable: '--inter-font',
 });
 
 export const metadata: Metadata = {
@@ -15,8 +16,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" className={inter.variable}>
+      <body>
         {children}
         <div className="modals" />
       </body>

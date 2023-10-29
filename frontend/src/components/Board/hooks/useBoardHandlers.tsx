@@ -1,18 +1,22 @@
 import { DropResult } from 'react-beautiful-dnd';
 import { IColumn } from '@/types/types';
 import { useBoardStore } from '@/store/BoardStore';
-import { Session } from 'next-auth';
 import { useEffect, useState } from 'react';
 import { TaskStatus } from '@commonTypes/Task';
-export const useBoardHandlers = (session: Session) => {
-  const { board, getBoard, setBoardState, updateTask, setEditingTask } =
+import { useProjectsStore } from '@/store/ProjectsStore';
+import { useAuthStore } from '@/store/AuthStore';
+
+export const useBoardHandlers = () => {
+  const user = useAuthStore((state) => state.user);
+  const selectedProject = useProjectsStore((state) => state.selectedProject);
+  const { board, getBoard, setBoardState, updateTask, getEditingTask } =
     useBoardStore(
-      ({ board, getBoard, setBoardState, updateTask, setEditingTask }) => ({
+      ({ board, getBoard, setBoardState, updateTask, getEditingTask }) => ({
         board,
         getBoard,
         setBoardState,
         updateTask,
-        setEditingTask,
+        getEditingTask,
       }),
     );
 
@@ -20,13 +24,13 @@ export const useBoardHandlers = (session: Session) => {
   const [newTaskStatus, setNewTaskStatus] = useState<TaskStatus>('todo');
 
   useEffect(() => {
-    if (session?.user.id) {
-      getBoard(session.user.id);
+    if (user && selectedProject?.id) {
+      getBoard();
     }
-  }, [getBoard, session?.user]);
+  }, [selectedProject, user]);
 
   const handleOnDragEnd = (result: DropResult) => {
-    const { destination, source, type } = result;
+    const { destination, source } = result;
 
     if (!destination) {
       return;
@@ -64,7 +68,7 @@ export const useBoardHandlers = (session: Session) => {
       const newColumns = new Map(board.columns);
       newColumns.set(startCol.id, newCol);
 
-      updateTask(session?.user.id, movedTask, finishCol.id, destination.index);
+      updateTask(user.id, movedTask, finishCol.id, destination.index);
       setBoardState({ ...board, columns: newColumns });
     } else {
       const finalTasks = [...finishCol.tasks];
@@ -79,7 +83,7 @@ export const useBoardHandlers = (session: Session) => {
         tasks: finalTasks,
       });
 
-      updateTask(session?.user.id, movedTask, finishCol.id, destination.index);
+      updateTask(user.id, movedTask, finishCol.id, destination.index);
       setBoardState({ ...board, columns: newColumns });
     }
   };
@@ -94,8 +98,8 @@ export const useBoardHandlers = (session: Session) => {
   };
 
   const onCloseModal = () => {
-    setEditingTask(null);
     setOpenedModal(false);
+    getEditingTask(null);
   };
 
   return {

@@ -4,7 +4,7 @@ import { SVG } from '@/components/ui/SVG/SVG';
 import s from './styles.module.scss';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  kind: 'primary' | 'secondary';
+  kind: 'primary' | 'secondary' | 'error';
   children: ReactNode;
   loading?: boolean;
   disabled?: boolean;
@@ -28,12 +28,7 @@ export const Button: FC<ButtonProps> = ({
 }) => {
   return (
     <button
-      className={clsx(
-        s.button,
-        kind === 'primary' ? s.primaryButton : s.secondaryButton,
-        className,
-        { [s.square]: square },
-      )}
+      className={clsx(s.button, [s[kind]], className, { [s.square]: square })}
       onClick={onClick}
       disabled={disabled}
       {...props}

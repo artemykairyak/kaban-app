@@ -20,7 +20,6 @@ export const handleResponse = async <T>(
 ): Promise<[T | null, BaseResponse | null]> => {
   try {
     const result = await res;
-    console.log('res', result);
 
     return [result.data, null];
   } catch (error) {

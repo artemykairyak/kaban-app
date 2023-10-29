@@ -44,7 +44,7 @@ export const Column: FC<ColumnProps> = memo(
     const columnColor: ColumnColor = columnColors[id];
 
     return (
-      <div className={className}>
+      <div className={clsx(s.columnWrapper, className)}>
         <Droppable droppableId={index.toString()} type="card">
           {(provided, snapshot) => {
             return (
@@ -98,9 +98,6 @@ export const Column: FC<ColumnProps> = memo(
                         draggableId={task.id}
                         index={index}
                         key={task.id}
-                        style={{
-                          backgroundColor: snapshot.isDraggingOver ? 'red' : '',
-                        }}
                       >
                         {(provided) => {
                           return (

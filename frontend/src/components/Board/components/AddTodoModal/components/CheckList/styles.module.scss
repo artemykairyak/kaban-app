@@ -1,0 +1,29 @@
+.listItem {
+  display: flex;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkboxInput {
+  height: 25px;
+  font-size: 12px;
+  padding: 0 10px;
+}
+
+.addListItemIcon {
+  width: 25px;
+  height: 25px;
+  color: var(--purple)
+}
+
+.deleteIcon {
+  color: var(--red40);
+  width: 20px;
+  height: 20px;
+}

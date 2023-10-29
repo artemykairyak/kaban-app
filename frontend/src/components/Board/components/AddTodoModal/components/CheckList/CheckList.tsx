@@ -1,19 +1,24 @@
-import s from '@/components/Board/components/AddTodoModal/styles.module.scss';
+import s from './styles.module.scss';
 import { Label } from '@/components/ui/Label/Label';
 import { Checkbox } from '@/components/ui/Checkbox/Checkbox';
 import { Input } from '@/components/ui/Input/Input';
-import { Button } from '@/components/ui/Button/Button';
 import { SVG } from '@/components/ui/SVG/SVG';
-import CloseIcon from '@/images/closeIcon.svg';
 import { ListItems } from '@commonTypes/Task';
 import { FC } from 'react';
+import AddIcon from '@/images/icons/addTaskIcon.svg';
+import DeleteIcon from '@/images/icons/deleteIcon.svg';
 
 interface CheckListProps {
   listItems: ListItems;
   setListItems: (v: ListItems) => void;
+  onAddListItem: VoidFunction;
 }
 
-export const CheckList: FC<CheckListProps> = ({ listItems, setListItems }) => {
+export const CheckList: FC<CheckListProps> = ({
+  listItems,
+  setListItems,
+  onAddListItem,
+}) => {
   const onChangeListItem = (id: string, value: string | boolean) => {
     const newItems = { ...listItems };
 
@@ -37,7 +42,7 @@ export const CheckList: FC<CheckListProps> = ({ listItems, setListItems }) => {
     return null;
   }
 
-  return Object.entries(listItems).map(([id, item]) => {
+  return Object.entries(listItems).map(([id, item], index, array) => {
     return (
       <div className={s.listItem} key={id}>
         <Label className={s.label} htmlFor={`listItem${id}`}>
@@ -53,15 +58,14 @@ export const CheckList: FC<CheckListProps> = ({ listItems, setListItems }) => {
             className={s.checkboxInput}
           />
         </Label>
-        <Button
-          type="button"
-          kind="secondary"
-          square={true}
-          className={s.deleteBtn}
-          onClick={() => onDeleteListItem(id)}
-        >
-          <SVG src={CloseIcon} className={s.deleteIcon} />
-        </Button>
+        <button onClick={() => onDeleteListItem(id)}>
+          <SVG src={DeleteIcon} className={s.deleteIcon} />
+        </button>
+        {index === array.length - 1 && (
+          <button type="button" onClick={onAddListItem}>
+            <SVG src={AddIcon} className={s.addListItemIcon} />
+          </button>
+        )}
       </div>
     );
   });
