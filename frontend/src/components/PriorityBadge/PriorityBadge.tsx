@@ -29,7 +29,7 @@ export const PriorityBadge: FC<PriorityBadgeProps> = ({
       color: selected ? 'white' : buttonColor.default,
       borderColor: buttonColor.default,
     }),
-    [selected],
+    [selected, priority],
   );
 
   return as === 'button' ? (

@@ -37,7 +37,10 @@ export const Sidebar = () => {
   useEffect(() => {
     if (selectedProject) {
       router.push(`${pathname}?projectId=${selectedProject.id}`);
+      return;
     }
+
+    router.push(pathname);
   }, [selectedProject]);
 
   const onSelectProject = async (project: Project) => {

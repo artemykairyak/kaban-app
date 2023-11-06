@@ -10,6 +10,8 @@ import { useBoardStore } from '@/store/BoardStore';
 import { Task } from '@commonTypes/Task';
 import { cropText } from '@/utils/utils';
 import { PriorityBadge } from '@/components/PriorityBadge/PriorityBadge';
+import { SVG } from '@/components/ui/SVG/SVG';
+import CommentsIcon from '@/images/icons/commentIcon.svg';
 
 interface TodoCardProps {
   task: Task;
@@ -28,7 +30,7 @@ export const TaskCard: FC<TodoCardProps> = ({
   index,
   onClick,
 }) => {
-  const { title, description, priority } = task;
+  const { title, description, priority, comments } = task;
 
   const { getEditingTask } = useBoardStore(({ getEditingTask }) => ({
     getEditingTask,
@@ -53,6 +55,10 @@ export const TaskCard: FC<TodoCardProps> = ({
         <span className={s.titleText}>{title}</span>
       </div>
       {description && <p className={s.desc}>{cropText(description)}</p>}
+      <div className={s.comments}>
+        <SVG src={CommentsIcon} className={s.commentsIcon} />
+        <span>{comments?.length} comments</span>
+      </div>
     </div>
   );
 };

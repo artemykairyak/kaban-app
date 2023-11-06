@@ -36,6 +36,7 @@ export const boardController = {
     }
   },
   updateTask: async (userId: string, taskId: string, task: Task) => {
+    delete task.comments;
     const prevTask: Record<string, any> = await TaskModel.findOne({
       userId,
       _id: taskId,

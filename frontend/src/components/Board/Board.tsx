@@ -15,6 +15,8 @@ export const Board = () => {
   const { selectedProject, editProject } = useProjectsStore((state) => state);
   const board = useBoardStore((state) => state.board);
 
+  console.log('BOARD', board);
+
   const titleRef = useRef<HTMLInputElement>(null);
 
   const [isEditingTitle, setEditingTitle] = useState(false);
@@ -39,6 +41,10 @@ export const Board = () => {
       titleRef.current.focus();
     }
   }, [isEditingTitle]);
+
+  if (!selectedProject) {
+    return <span className={s.empty}>{`You don't have any projects yet`}</span>;
+  }
 
   return (
     <>

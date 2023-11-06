@@ -127,11 +127,9 @@ export const useBoardStore = create<BoardState>((set, get) => ({
     const newTask: Task = {
       ...task,
       order: taskIndex,
-      status: task.status,
+      status: columnId,
       list: filteredList,
     };
-
-    delete newTask.comments;
 
     const { data: isSuccess } = await instance.put<boolean>(
       `/tasks/${userId}/${task.id}`,
