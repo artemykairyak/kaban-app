@@ -216,6 +216,7 @@ export const TaskModal: FC<TaskModalProps> = ({ onClose, status, taskId }) => {
                   <button
                     type="button"
                     key={key}
+                    disabled={editingTask}
                     style={{
                       backgroundColor: selected
                         ? buttonColor.default
