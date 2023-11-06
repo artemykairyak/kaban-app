@@ -28,8 +28,6 @@ export const Board = () => {
     newTaskStatus,
   } = useBoardHandlers();
 
-  console.log('BOARD', board.columns);
-
   const onEditTitle = (e: ChangeEvent<HTMLInputElement>) => {
     editProject(e.target.value);
     setEditingTitle(false);

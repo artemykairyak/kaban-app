@@ -21,7 +21,7 @@ export const App = ({ session }) => {
   return (
     <>
       <SessionProvider session={session}>
-        {session.status === 'authenticated' && !user ? (
+        {session?.status === 'authenticated' && !user ? (
           'loading'
         ) : (
           <div className={s.layout}>

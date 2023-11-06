@@ -1,4 +1,4 @@
-import { columnColors, columns } from '@/constants/constants';
+import { columnColors, columns, priorities } from '@/constants/constants';
 import s from './styles.module.scss';
 import { Input } from '@/components/ui/Input/Input';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
@@ -17,9 +17,10 @@ import { useAuthStore } from '@/store/AuthStore';
 import { SVG } from '@/components/ui/SVG/SVG';
 import CheckListIcon from '@/images/icons/checkListIcon.svg';
 import AddIcon from '@/images/icons/addTaskIcon.svg';
-import { ColumnColor } from '@/types/types';
+import { Color } from '@/types/types';
 import { Comment } from '@/components/Board/components/AddTodoModal/components/Comment/Comment';
 import { IComment } from '@commonTypes/Comment';
+import { PriorityBadge } from '@/components/PriorityBadge/PriorityBadge';
 
 interface TaskModalProps {
   onClose: VoidFunction;
@@ -50,7 +51,8 @@ export const TaskModal: FC<TaskModalProps> = ({ onClose, status, taskId }) => {
     resolver: yupResolver(addTaskSchema),
   });
 
-  const watchField = watch('status', '');
+  const statusField = watch('status', '');
+  const priorityField = watch('priority', '');
 
   const [listItems, setListItems] = useState<ListItems>(
     editingTask ? editingTask.list : {},
@@ -113,6 +115,7 @@ export const TaskModal: FC<TaskModalProps> = ({ onClose, status, taskId }) => {
       });
     } else {
       setValue('status', status);
+      setValue('priority', 'low');
     }
   }, [editingTask]);
 
@@ -206,8 +209,8 @@ export const TaskModal: FC<TaskModalProps> = ({ onClose, status, taskId }) => {
             <Label className={s.label}>Status</Label>
             <div className={s.statusList}>
               {columns.map(({ key, title }) => {
-                const buttonColor: ColumnColor = columnColors[key];
-                const selected = watchField === key;
+                const buttonColor: Color = columnColors[key];
+                const selected = statusField === key;
 
                 return (
                   <button
@@ -232,6 +235,26 @@ export const TaskModal: FC<TaskModalProps> = ({ onClose, status, taskId }) => {
                   >
                     {title}
                   </button>
+                );
+              })}
+            </div>
+            <div className={s.priorityList}>
+              {priorities.map(({ key }) => {
+                const selected = priorityField === key;
+
+                return (
+                  <PriorityBadge
+                    priority={key}
+                    selected={selected}
+                    key={key}
+                    as="button"
+                    onClick={() => {
+                      setValue('priority', key, {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      });
+                    }}
+                  />
                 );
               })}
             </div>

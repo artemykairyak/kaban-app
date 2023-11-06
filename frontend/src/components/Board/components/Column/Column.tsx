@@ -10,7 +10,7 @@ import { Task, TaskStatus } from '@commonTypes/Task';
 import { columnColors } from '@/constants/constants';
 import { SVG } from '@/components/ui/SVG/SVG';
 import AddTaskIcon from '@/images/icons/addTaskIcon.svg';
-import { ColumnColor } from '@/types/types';
+import { Color } from '@/types/types';
 
 interface ColumnProps {
   id: TaskStatus;
@@ -41,7 +41,7 @@ export const Column: FC<ColumnProps> = memo(
         : tasks.length;
     }, [searchString, tasks.length]);
 
-    const columnColor: ColumnColor = columnColors[id];
+    const columnColor: Color = columnColors[id];
 
     return (
       <div className={clsx(s.columnWrapper, className)}>

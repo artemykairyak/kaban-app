@@ -81,6 +81,13 @@
   }
 }
 
+.priorityList {
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+  gap: 5px;
+}
+
 .list {
   display: flex;
   align-items: center;
@@ -107,7 +114,6 @@
   font-size: 12px;
   color: var(--gray15);
 }
-
 
 .desc {
   border-radius: 6px;

@@ -9,6 +9,7 @@ import s from './styles.module.scss';
 import { useBoardStore } from '@/store/BoardStore';
 import { Task } from '@commonTypes/Task';
 import { cropText } from '@/utils/utils';
+import { PriorityBadge } from '@/components/PriorityBadge/PriorityBadge';
 
 interface TodoCardProps {
   task: Task;
@@ -27,7 +28,7 @@ export const TaskCard: FC<TodoCardProps> = ({
   index,
   onClick,
 }) => {
-  const { title, description } = task;
+  const { title, description, priority } = task;
 
   const { getEditingTask } = useBoardStore(({ getEditingTask }) => ({
     getEditingTask,
@@ -47,6 +48,7 @@ export const TaskCard: FC<TodoCardProps> = ({
       className={s.card}
       onClick={onClickTask}
     >
+      <PriorityBadge priority={priority} className={s.priority} as="span" />
       <div className={s.title}>
         <span className={s.titleText}>{title}</span>
       </div>
