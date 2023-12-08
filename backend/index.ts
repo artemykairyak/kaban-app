@@ -135,5 +135,5 @@ app.delete("/projects/:projectId", async (req: Request, res) => {
 
 app.listen(port, async () => {
   await connectDB();
-  console.log(`Example app listening at http://localhost:${port}`);
+  console.log(`App listening at http://localhost:${port}`);
 });

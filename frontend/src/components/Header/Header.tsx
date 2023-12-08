@@ -37,18 +37,21 @@ export const Header = () => {
   return (
     <>
       <header className={s.header} style={{ height: HEADER_HEIGHT }}>
-        <div className={s.controls}>
-          <form className={s.search}>
-            <Input
-              name="search"
-              placeholder="Search"
-              icon={SearchIcon}
-              value={searchString}
-              onChange={(v) => setSearchString(v)}
-            />
-          </form>
-          <Avatar user={data?.user} onClick={onClickAvatar} />
-        </div>
+        {data?.user && (
+          <div className={s.controls}>
+            <form className={s.search}>
+              <Input
+                name="search"
+                placeholder="Search"
+                icon={SearchIcon}
+                value={searchString}
+                onChange={(v) => setSearchString(v)}
+              />
+            </form>
+
+            <Avatar user={data?.user} onClick={onClickAvatar} />
+          </div>
+        )}
       </header>
       <Modal isOpen={isOpenedModal} onClose={() => setIsOpenedModal(false)}>
         <AuthModal />
